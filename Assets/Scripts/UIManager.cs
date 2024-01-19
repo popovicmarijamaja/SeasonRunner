@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void HealthSlider(float health)
+    public void HealthSlider(int health)
     {
         healthSlider.value = health;
     }

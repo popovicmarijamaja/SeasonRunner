@@ -10,18 +10,19 @@ public class GameManager : MonoBehaviour
     public const float SpeedIncreasing = 0.03f;
     private const float MagnetLasting = 6f;
     private const string GameplayScene = "Gameplay";
-    private const float HealthMaxValue = 4f;
-    private const float HealthMinValue = 0f;
+    private const int HealthMaxValue = 4;
+    private const int HealthMinValue = 0;
 
     [SerializeField] private GameObject getReadyEnvironment;
     [SerializeField] private Transform newSectionPos;
+    [SerializeField] private PlayerManager playerManager;
 
     private int coinScore;
     private float runningScore;
     public int totalScore;
     private float runningScoreValue = 2f;
     private bool isMagnetRunning;
-    private float health;
+    private int health;
 
     public GameState CurrentState { get; private set; }
 
@@ -46,8 +47,8 @@ public class GameManager : MonoBehaviour
 
     public void MainMenu()
     {
-        PlayerManager.Instance.PlayerAnimation(CurrentState);
-        PlayerManager.Instance.enabled = false;
+        playerManager.PlayerAnimation(CurrentState);
+        playerManager.enabled = false;
         EnvironmentMoving();
     }
 
@@ -71,8 +72,8 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.Playing);
         EnvironmentMoving();
-        PlayerManager.Instance.PlayerAnimation(CurrentState);
-        PlayerManager.Instance.enabled = true;
+        playerManager.PlayerAnimation(CurrentState);
+        playerManager.enabled = true;
         UIManager.Instance.PauseMenu(CurrentState);
         UIManager.Instance.Play();
         AudioManager.Instance.BackgroundMusic();
@@ -85,8 +86,8 @@ public class GameManager : MonoBehaviour
         
         SetGameState(GameState.Pause);
         EnvironmentMoving();
-        PlayerManager.Instance.PlayerAnimation(CurrentState);
-        PlayerManager.Instance.enabled = false;
+        playerManager.PlayerAnimation(CurrentState);
+        playerManager.enabled = false;
         UIManager.Instance.PauseMenu(CurrentState);
     }
 
@@ -94,12 +95,12 @@ public class GameManager : MonoBehaviour
     {
         SetGameState(GameState.GameOver);
         EnvironmentMoving();
-        PlayerManager.Instance.PlayerAnimation(CurrentState);
-        PlayerManager.Instance.enabled = false;
+        playerManager.PlayerAnimation(CurrentState);
+        playerManager.enabled = false;
         StartCoroutine(WaitForEndOfParcticles());
         if (health != HealthMinValue)
         {
-            PlayerManager.Instance.ExplosionParticle();
+            playerManager.ExplosionParticle();
             health = HealthMinValue;
             UIManager.Instance.HealthSlider(health);
         }
@@ -113,19 +114,10 @@ public class GameManager : MonoBehaviour
 
     private void EnvironmentMoving()
     {
-        
-        if (CurrentState == GameState.Playing)
-        {
-            getReadyEnvironment.GetComponent<EnvironmentMoving>().enabled = true;
-            foreach (var pooledObject in ObjectPool.Instance.pooledObjects)
-                pooledObject.GetComponent<EnvironmentMoving>().enabled = true;
-        }
-        else
-        {
-            getReadyEnvironment.GetComponent<EnvironmentMoving>().enabled = false;
-            foreach (var pooledObject in ObjectPool.Instance.pooledObjects)
-                pooledObject.GetComponent<EnvironmentMoving>().enabled = false;
-        }
+        bool isPlaying = CurrentState == GameState.Playing;
+        getReadyEnvironment.GetComponent<EnvironmentMoving>().enabled = isPlaying;
+        foreach (var pooledObject in ObjectPool.Instance.pooledObjectsEnvironment)
+            pooledObject.GetComponent<EnvironmentMoving>().enabled = isPlaying;
     }
 
     public void CoinCollect()
@@ -154,21 +146,21 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator MagnetCountDown()
     {
-        PlayerManager.Instance.CollectorColider.enabled = true;
+        playerManager.CollectorColider.enabled = true;
         yield return new WaitForSeconds(MagnetLasting);
-        PlayerManager.Instance.CollectorColider.enabled = false;
+        playerManager.CollectorColider.enabled = false;
         isMagnetRunning = false;
     }
 
     private void Collectible()
     {
         AudioManager.Instance.CoinSound();
-        PlayerManager.Instance.CollectParticles();
+        playerManager.CollectParticles();
     }
 
     public void SpawnNewSection()
     {
-        GameObject environment = ObjectPool.Instance.GetPooledObject();
+        GameObject environment = ObjectPool.Instance.GetPooledObjectEnvironment();
         if (environment != null)
         {
             environment.transform.position = newSectionPos.position;

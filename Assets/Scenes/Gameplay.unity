@@ -3672,6 +3672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   getReadyEnvironment: {fileID: 5113953}
   newSectionPos: {fileID: 2038350245}
+  playerManager: {fileID: 1993283667}
   totalScore: 0
 --- !u!4 &158068402
 Transform:
@@ -16475,6 +16476,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697549870}
   m_Mesh: {fileID: -8083763932631721022, guid: b5a80b3e2a089b841b155d7c7f461e7c, type: 3}
+--- !u!1 &698280504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 698280505}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &698280505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698280504}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1993283665}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &702747608
 GameObject:
   m_ObjectHideFlags: 0
@@ -29553,7 +29585,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environment: {fileID: 1555494929363657981, guid: d109da4c838e06e44a3e7fc8c583613e,
     type: 3}
-  pooledObjects: []
+  fireParticle: {fileID: 8809325100643378449, guid: e54001a83cc50e34dac0786b9383cc9e,
+    type: 3}
+  pooledObjectsEnvironment: []
 --- !u!4 &1294698042
 Transform:
   m_ObjectHideFlags: 0
@@ -45518,6 +45552,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 705114769057132490}
+  - {fileID: 698280505}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45550,8 +45585,11 @@ MonoBehaviour:
   leftPos: {fileID: 1833237859}
   centrePos: {fileID: 1855667637}
   rightPos: {fileID: 1635550418}
+  firePoint: {fileID: 698280505}
   collect: {fileID: 7686998315073032463}
   boom: {fileID: 1219323360496963604}
+  fireParticlePrefab: {fileID: 8809325100643378449, guid: e54001a83cc50e34dac0786b9383cc9e,
+    type: 3}
   PlayerAnim: {fileID: 705114769057625003}
   CollectorColider: {fileID: 1993283666}
 --- !u!1 &1993953749

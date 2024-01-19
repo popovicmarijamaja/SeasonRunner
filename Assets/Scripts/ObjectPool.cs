@@ -5,11 +5,14 @@ public class ObjectPool : MonoBehaviour
 {
 	public static ObjectPool Instance;
 
-    public const int amountToPool = 3;
-	
-	[SerializeField] private GameObject environment;
+    private const int PoolSizeEnvironment = 3;
+    private const int PoolSizeFireParticle = 10;
 
-    public List<GameObject> pooledObjects = new();
+    [SerializeField] private GameObject environment;
+    [SerializeField] private GameObject fireParticle;
+    
+    private readonly List<GameObject> pooledObjectsFire = new();
+    public List<GameObject> pooledObjectsEnvironment = new();
 
     private void Awake()
     {
@@ -21,21 +24,43 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < amountToPool; i++)
-        {
-            GameObject obj = Instantiate(environment,transform.parent);
-            obj.SetActive(false);
-            pooledObjects.Add(obj);
-        }
+        InitializePool();
     }
 
-    public GameObject GetPooledObject()
+    private void InitializePool()
     {
-        for(int i = 0; i < pooledObjects.Count; i++)
+        for (int i = 0; i < PoolSizeEnvironment; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            GameObject obj = Instantiate(environment, transform.parent);
+            obj.SetActive(false);
+            pooledObjectsEnvironment.Add(obj);
+        }
+
+        for (int i = 0; i < PoolSizeFireParticle; i++)
+        {
+            GameObject obj = Instantiate(fireParticle, transform.parent);
+            obj.SetActive(false);
+            pooledObjectsFire.Add(obj);
+        }
+    }
+    public GameObject GetPooledObjectEnvironment()
+    {
+        for (int i = 0; i < pooledObjectsEnvironment.Count; i++)
+        {
+            if (!pooledObjectsEnvironment[i].activeInHierarchy)
             {
-                return pooledObjects[i];
+                return pooledObjectsEnvironment[i];
+            }
+        }
+        return null;
+    }
+    public GameObject GetPooledObjectFire()
+    {
+        foreach (GameObject obj in pooledObjectsFire)
+        {
+            if (!obj.activeInHierarchy)
+            {
+                return obj;
             }
         }
         return null;

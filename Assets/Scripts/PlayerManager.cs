@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections;
 public class PlayerManager : MonoBehaviour
 {
-    public static PlayerManager Instance { get; private set; }
-
     private const float TransitionDuration = 0.2f;
     private const float JumpForce = 5f;
     private const string JumpTriggerParametar = "jump";
@@ -16,8 +14,10 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform leftPos;
     [SerializeField] private Transform centrePos;
     [SerializeField] private Transform rightPos;
+    [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collect;
     [SerializeField] private ParticleSystem boom;
+    [SerializeField] private GameObject fireParticlePrefab;
     public Animator PlayerAnim;
     public BoxCollider CollectorColider;
     private Rigidbody playerRb;
@@ -25,18 +25,10 @@ public class PlayerManager : MonoBehaviour
 
     private bool isTransitioning = false;
     private bool isGrounded;
-
+    public bool hasGun;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
         PlayerAnim = player.GetComponent<Animator>();
         CollectorColider = GetComponent<BoxCollider>();
         playerRb = player.GetComponent<Rigidbody>();
@@ -77,6 +69,21 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.DownArrow) && isGrounded)
         {
             PlayerAnim.SetTrigger(RollTriggerParametar);
+        }
+        //Player shoot
+        if (Input.GetKeyDown(KeyCode.Space) && hasGun)
+        {
+            ShootFireParticle();
+        }
+    }
+    private void ShootFireParticle()
+    {
+        GameObject fireParticle = ObjectPool.Instance.GetPooledObjectFire();
+
+        if (fireParticle != null)
+        {
+            fireParticle.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
+            fireParticle.SetActive(true);
         }
     }
 

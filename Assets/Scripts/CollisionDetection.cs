@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class CollisionDetection : MonoBehaviour
 {
@@ -10,10 +11,23 @@ public class CollisionDetection : MonoBehaviour
     private const string StarTag = "star";
     private const string MushroomTag = "mushrooms";
     private const string HealthPackTag = "healthPack";
+    private const string ShieldTag = "shield";
+    private const string GunTag = "gun";
+    private const string EnemyTag = "enemy";
+    private const float ShieldLasting = 5f;
+    private const float GunLasting = 5f;
+
+    private bool isShieldActive = false;
+    private PlayerManager playerManager;
+
+    private void Awake()
+    {
+        playerManager = GetComponentInParent<PlayerManager>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(ObstacleTag))
+        if (other.CompareTag(ObstacleTag) && !isShieldActive)
         {
             GameManager.Instance.GameOver();
         }
@@ -35,7 +49,7 @@ public class CollisionDetection : MonoBehaviour
             other.gameObject.SetActive(false);
             GameManager.Instance.StarCollect();
         }
-        if (other.CompareTag(MushroomTag))
+        if (other.CompareTag(MushroomTag) && !isShieldActive)
         {
             GameManager.Instance.HealthDecrease();
         }
@@ -44,22 +58,49 @@ public class CollisionDetection : MonoBehaviour
             other.gameObject.SetActive(false);
             GameManager.Instance.HealthIncrease();
         }
+        if (other.CompareTag(ShieldTag))
+        {
+            other.gameObject.SetActive(false);
+            StartCoroutine(Shield());
+        }
+        if (other.CompareTag(GunTag))
+        {
+            other.gameObject.SetActive(false);
+            StartCoroutine(Gun());
+        }
+        if (other.CompareTag(EnemyTag) && !isShieldActive)
+        {
+            GameManager.Instance.GameOver();
+        }
     }
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag(GroundTag))
         {
-            PlayerManager.Instance.Grounded();
+            playerManager.Grounded();
         }
+    }
+
+    private IEnumerator Shield()
+    {
+        isShieldActive = true;
+        yield return new WaitForSeconds(ShieldLasting);
+        isShieldActive = false;
+    }
+    private IEnumerator Gun()
+    {
+        playerManager.hasGun = true;
+        yield return new WaitForSeconds(GunLasting);
+        playerManager.hasGun = false;
     }
 
     private void RollCollider()
     {
-        PlayerManager.Instance.RollDown();
+        playerManager.RollDown();
     }
 
     private void RollColliderUp()
     {
-        PlayerManager.Instance.RollUp();
+        playerManager.RollUp();
     }
 }

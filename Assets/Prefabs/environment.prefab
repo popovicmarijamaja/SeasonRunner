@@ -38293,6 +38293,12 @@ MonoBehaviour:
     type: 3}
   healthPackPrefab: {fileID: 1790190158351776602, guid: 73a52bc9cab9e0d478993f03d157a177,
     type: 3}
+  shieldPrefab: {fileID: 6450428026335650160, guid: ab93af993b7cadf4898b0feaff428417,
+    type: 3}
+  enemyPrefab: {fileID: 7778625762149928996, guid: 970d6f1e6146f4842a819f10fa6e490d,
+    type: 3}
+  gunPrefab: {fileID: 8866106083991393466, guid: 487b611decb0058488e977d014154298,
+    type: 3}
 --- !u!1 &4114513575814564959
 GameObject:
   m_ObjectHideFlags: 0

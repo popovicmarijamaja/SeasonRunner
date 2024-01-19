@@ -8,18 +8,20 @@ public class SpawnManager : MonoBehaviour
     public const int NumberOfCoin = 11;
     private const int NumberOfObstacles = 11;
     private const int NumberOfRockInLine = 2;
-    private const float RCSPosY = 0.5f; //for rock, coin and star
-    private const float WMPosY = 0f; //for wooden obstacle and mushrooms
+    private const float RCSGPosY = 0.5f; //for rock, coin, shield, star and gun
+    private const float WEMPosY = 0f; //for wooden obstacle, enemy and mushrooms
     private const float DistanceBetweenObstacles = -7.6f;
     private const float DistanceBetweenCoin = -7.6f;
     private const float FirstDistanceObstacle = -51.5f;
     private const float FirstDistanceCoin = 31.3f;
+    private const string AliveParametar = "alive";
 
     private readonly List<GameObject> SpawnedRocks = new();
     private readonly List<GameObject> SpawnedWoodenObstacle = new();
     private readonly List<GameObject> SpawnedMushrooms = new();
     private readonly List<GameObject> SpawnedStars = new();
     public readonly List<GameObject> SpawnedCoins = new();
+    public readonly List<GameObject> SpawnedEnemy = new();
 
     [SerializeField] private GameObject rockPrefab;
     [SerializeField] private GameObject woodenObstaclePrefab;
@@ -28,10 +30,15 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private GameObject magnetPrefab;
     [SerializeField] private GameObject healthPackPrefab;
+    [SerializeField] private GameObject shieldPrefab;
+    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject gunPrefab;
 
     private bool isCoinSpawned;
     private GameObject magnet;
     private GameObject healthPack;
+    private GameObject shield;
+    private GameObject gun;
 
     private void Start()
     {
@@ -55,21 +62,25 @@ public class SpawnManager : MonoBehaviour
             //Rock spawn
             for (int j = 0; j < NumberOfRockInLine; j++)
             {
-                obj = Instantiate(rockPrefab, new Vector3(posX, RCSPosY, posZ), Quaternion.Euler(-90, 0, 0), transform.parent);
+                obj = Instantiate(rockPrefab, new Vector3(posX, RCSGPosY, posZ), Quaternion.Euler(-90, 0, 0), transform.parent);
                 SpawnedRocks.Add(obj);
             }
 
             //Wooden obstacle spawn
-            obj = Instantiate(woodenObstaclePrefab, new Vector3(posX, WMPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
+            obj = Instantiate(woodenObstaclePrefab, new Vector3(posX, WEMPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
             SpawnedWoodenObstacle.Add(obj);
 
             //Star spawn (wooden obstacle part)
-            obj = Instantiate(starPrefab, new Vector3(posX, RCSPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
+            obj = Instantiate(starPrefab, new Vector3(posX, RCSGPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
             SpawnedStars.Add(obj);
 
             //Mushrooms spawn
-            obj = Instantiate(mushroomPrefab, new Vector3(posX, WMPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
+            obj = Instantiate(mushroomPrefab, new Vector3(posX, WEMPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
             SpawnedMushrooms.Add(obj);
+
+            //Enemy spawn
+            obj = Instantiate(enemyPrefab, new Vector3(posX, WEMPosY, posZ), Quaternion.Euler(0, 0, 0), transform.parent);
+            SpawnedEnemy.Add(obj);
         }
     }
 
@@ -80,6 +91,7 @@ public class SpawnManager : MonoBehaviour
         float[] pos = { -0.5f, 0.5f, 1.6f };
         float[] posForMushrooms = { -1, 0, 1 };
         float chance;
+        float neutralPosZ = 0f;
         int j = 1;
         for (int i = 0; i < NumberOfObstacles; i++)
         {
@@ -94,15 +106,16 @@ public class SpawnManager : MonoBehaviour
             SpawnedWoodenObstacle[i].SetActive(false);
             SpawnedMushrooms[i].SetActive(false);
             SpawnedStars[i].SetActive(false);
+            SpawnedEnemy[i].SetActive(false);
 
-            // 60% chance for 1 rock in line
-            if (SpawnedRocks[j].transform.localPosition.x == prevX && chance <= 0.6f)
+            // 50% chance for 1 rock in line
+            if (SpawnedRocks[j].transform.localPosition.x == prevX && chance <= 0.5f)
              {
                 SpawnedRocks[j - 1].SetActive(true);
-                SpawnedRocks[j - 1].transform.localPosition = new Vector3(SpawnedRocks[j].transform.localPosition.x, RCSPosY, randomPosZ);
+                SpawnedRocks[j - 1].transform.localPosition = new Vector3(SpawnedRocks[j].transform.localPosition.x, RCSGPosY, randomPosZ);
             }
              // 20% chance for 2 rocks in line
-             else if(SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.6f && chance <= 0.8f)
+             else if(SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.5f && chance <= 0.7f)
              {
                 SpawnedRocks[j].SetActive(true);
                 SpawnedRocks[j - 1].SetActive(true);
@@ -115,11 +128,11 @@ public class SpawnManager : MonoBehaviour
                     randomPosZ = pos[randomIndex];
                 } while (randomPosZ == prevZ);
 
-                SpawnedRocks[j].transform.localPosition = new Vector3(SpawnedRocks[j].transform.localPosition.x, RCSPosY, randomPosZ);
-                SpawnedRocks[j - 1].transform.localPosition = new Vector3(SpawnedRocks[j - 1].transform.localPosition.x, RCSPosY, prevZ);
+                SpawnedRocks[j].transform.localPosition = new Vector3(SpawnedRocks[j].transform.localPosition.x, RCSGPosY, randomPosZ);
+                SpawnedRocks[j - 1].transform.localPosition = new Vector3(SpawnedRocks[j - 1].transform.localPosition.x, RCSGPosY, prevZ);
             }
              // 10% chance for wooden obsticle
-             else if (SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.8f && chance <= 0.9f)
+             else if (SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.7f && chance <= 0.8f)
              {
                 SpawnedWoodenObstacle[i].SetActive(true);
 
@@ -133,7 +146,7 @@ public class SpawnManager : MonoBehaviour
                 else if (chance>0.4f && chance <= 0.8)
                 {
                     SpawnedMushrooms[i].SetActive(true);
-                    SpawnedMushrooms[i].transform.localPosition = new Vector3(SpawnedMushrooms[i].transform.localPosition.x, WMPosY, posForMushrooms[1]);
+                    SpawnedMushrooms[i].transform.localPosition = new Vector3(SpawnedMushrooms[i].transform.localPosition.x, WEMPosY, neutralPosZ);
                 }
                 // 2% chance for empty wooden obsticle
                 else if(chance > 0.8f)
@@ -143,13 +156,20 @@ public class SpawnManager : MonoBehaviour
                 }
              }
              // 10% chance for mushrooms
-             else if(SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.9f)
+             else if(SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.8f && chance <= 0.9f)
              {
                 SpawnedMushrooms[i].SetActive(true);
                 randomPosZ = posForMushrooms[randomIndex];
-                SpawnedMushrooms[i].transform.localPosition = new Vector3(SpawnedMushrooms[i].transform.localPosition.x, WMPosY, randomPosZ);
+                SpawnedMushrooms[i].transform.localPosition = new Vector3(SpawnedMushrooms[i].transform.localPosition.x, WEMPosY, randomPosZ);
              }
-             j += 2;
+             // 10% chance for enemy
+             else if (SpawnedRocks[j].transform.localPosition.x == prevX && chance > 0.9f)
+             {
+                 SpawnedEnemy[i].SetActive(true);
+                 SpawnedEnemy[i].transform.localPosition = new Vector3(SpawnedEnemy[i].transform.localPosition.x, WEMPosY, neutralPosZ);
+                SpawnedEnemy[i].GetComponentInChildren<Animator>().SetBool(AliveParametar, true);
+             }
+            j += 2;
         }
     }
 
@@ -167,13 +187,13 @@ public class SpawnManager : MonoBehaviour
             {
                 SpawnedCoins[i].SetActive(true);
                 posX = FirstDistanceCoin + (i * DistanceBetweenCoin);
-                SpawnedCoins[i].transform.localPosition = new Vector3(posX, RCSPosY, randomPosZ);
+                SpawnedCoins[i].transform.localPosition = new Vector3(posX, RCSGPosY, randomPosZ);
             }
             else
             {
                 posX = FirstDistanceCoin + (i * DistanceBetweenCoin);
                 GameObject obj = Instantiate(coinPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0), transform.parent);
-                obj.transform.localPosition = new Vector3(posX, RCSPosY, randomPosZ);
+                obj.transform.localPosition = new Vector3(posX, RCSGPosY, randomPosZ);
                 SpawnedCoins.Add(obj);
             }
         }
@@ -185,6 +205,8 @@ public class SpawnManager : MonoBehaviour
     {
         magnet = Instantiate(magnetPrefab, Vector3.zero, Quaternion.Euler(0, 0, 0), transform.parent);
         healthPack = Instantiate(healthPackPrefab, Vector3.zero, Quaternion.Euler(0, 0, 0), transform.parent);
+        shield = Instantiate(shieldPrefab, Vector3.zero, Quaternion.Euler(0, 0, 0), transform.parent);
+        gun = Instantiate(gunPrefab, Vector3.zero, Quaternion.Euler(0, 0, 0), transform.parent);
     }
 
     public void RespawnPower()
@@ -200,18 +222,32 @@ public class SpawnManager : MonoBehaviour
         // Rest of chance fo nothing --> 20%
         magnet.SetActive(false);
         healthPack.SetActive(false);
+        shield.SetActive(false);
+        gun.SetActive(false);
 
-        // 35% chance for magnet
-        if (chance <= 0.35f)
+        // 20% chance for magnet
+        if (chance <= 0.2f)
         {
             magnet.SetActive(true);
-            magnet.transform.localPosition = new Vector3(randomPosX, RCSPosY, randomPosZ);
+            magnet.transform.localPosition = new Vector3(randomPosX, RCSGPosY, randomPosZ);
         }
-        // 35% chance for health pack
-        else if(chance > 0.35f && chance <= 0.7f)
+        // 20% chance for health pack
+        else if(chance > 0.2f && chance <= 0.4f)
         {
             healthPack.SetActive(true);
-            healthPack.transform.localPosition = new Vector3(randomPosX, RCSPosY, randomPosZ);
+            healthPack.transform.localPosition = new Vector3(randomPosX, RCSGPosY, randomPosZ);
+        }
+        // 20% chance for shield
+        else if(chance > 0.4f && chance <= 0.6f)
+        {
+            shield.SetActive(true);
+            shield.transform.localPosition = new Vector3(randomPosX, RCSGPosY, randomPosZ);
+        }
+        // 20% chance for gun
+        else if (chance > 0.6f && chance <= 0.8f)
+        {
+            gun.SetActive(true);
+            gun.transform.localPosition = new Vector3(randomPosX, RCSGPosY, randomPosZ);
         }
     }
 }
