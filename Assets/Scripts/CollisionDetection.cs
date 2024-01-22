@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class CollisionDetection : MonoBehaviour
+public class CollisionDetection : MonoBehaviour // CR: PlayerCollision je preciznije ime za ovu klasu
 {
     private const string ObstacleTag = "obstacle";
     private const string CoinTag = "coin";
@@ -14,10 +14,10 @@ public class CollisionDetection : MonoBehaviour
     private const string ShieldTag = "shield";
     private const string GunTag = "gun";
     private const string EnemyTag = "enemy";
-    private const float ShieldLasting = 5f;
-    private const float GunLasting = 5f;
+    private const float ShieldLasting = 5f; // CR: ShieldDuration
+    private const float GunLasting = 5f; // CR: GunDuration
 
-    private bool isShieldActive = false;
+    private bool isShieldActive = false; // CR: Primeti da ti je ovaj bool ovde, a isMagnetActive u GameManageru. Trebalo bi da budu na istom mestu. Kada zavrsis ostale stvari, razmisli o resenju za ovo pa cemo da diskutujemo.
     private PlayerManager playerManager;
 
     private void Awake()
@@ -27,6 +27,7 @@ public class CollisionDetection : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+		// Ovu logiku mozes da razbijes u vise pomocnih funkcija da bi bilo lakse za citanje i potencijalne izmene.
         if (other.CompareTag(ObstacleTag) && !isShieldActive)
         {
             GameManager.Instance.GameOver();
@@ -81,25 +82,25 @@ public class CollisionDetection : MonoBehaviour
         }
     }
 
-    private IEnumerator Shield()
+    private IEnumerator Shield() // CR: ActivateShield
     {
         isShieldActive = true;
         yield return new WaitForSeconds(ShieldLasting);
         isShieldActive = false;
     }
-    private IEnumerator Gun()
+    private IEnumerator Gun() // CR: ActivateGun
     {
         playerManager.hasGun = true;
         yield return new WaitForSeconds(GunLasting);
         playerManager.hasGun = false;
     }
 
-    private void RollCollider()
+    private void RollCollider() // CR: StartRoll
     {
         playerManager.RollDown();
     }
 
-    private void RollColliderUp()
+    private void RollColliderUp() // CR: EndRoll
     {
         playerManager.RollUp();
     }

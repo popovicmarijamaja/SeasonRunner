@@ -5,14 +5,14 @@ public class ObjectPool : MonoBehaviour
 {
 	public static ObjectPool Instance;
 
-    private const int PoolSizeEnvironment = 3;
-    private const int PoolSizeFireParticle = 10;
+    private const int PoolSizeEnvironment = 3; // CR: U imenu treba zadnja rec da predstavlja ono sto objekat jeste, a prethodne reci ga blize opisuju. Ovako zvuci kao da ovo predstavlja environment, a u stvari predstavlja size. EnvironmentPoolSize je bolje ime.
+    private const int PoolSizeFireParticle = 10; // CR: FireballPoolSize, FireProjectilePoolSize ili slicno
 
     [SerializeField] private GameObject environment;
-    [SerializeField] private GameObject fireParticle;
+    [SerializeField] private GameObject fireParticle; // CR: Koju god nimenklaturu usvojis umesto particle za ovo, stavi je i ovde, npr. fireball.
     
-    private readonly List<GameObject> pooledObjectsFire = new();
-    public List<GameObject> pooledObjectsEnvironment = new();
+    private readonly List<GameObject> pooledObjectsFire = new(); // CR: Opet, zadnja rec treba da opisuje objekat. fireballPool.
+    public List<GameObject> pooledObjectsEnvironment = new(); // CR: environmentPool
 
     private void Awake()
     {
@@ -20,6 +20,7 @@ public class ObjectPool : MonoBehaviour
         {
             Instance = this;
         }
+		// CR: Fali ti else sa Destroy ovde, kao sto imas u game manageru.
     }
 
     private void Start()
@@ -43,7 +44,7 @@ public class ObjectPool : MonoBehaviour
             pooledObjectsFire.Add(obj);
         }
     }
-    public GameObject GetPooledObjectEnvironment()
+    public GameObject GetPooledObjectEnvironment() // CR: Posto se objekat vec zove ObjectPool, reci PooledObject su ti ovde suvisne jer se podrazumevaju. GetEnvironment ili GetEnvironmentChunk je ovde dovoljno.
     {
         for (int i = 0; i < pooledObjectsEnvironment.Count; i++)
         {
@@ -54,7 +55,7 @@ public class ObjectPool : MonoBehaviour
         }
         return null;
     }
-    public GameObject GetPooledObjectFire()
+    public GameObject GetPooledObjectFire() // CR: Po istoj logici, GetFireball je dovoljno.
     {
         foreach (GameObject obj in pooledObjectsFire)
         {

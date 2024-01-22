@@ -4,24 +4,24 @@ public class PlayerManager : MonoBehaviour
 {
     private const float TransitionDuration = 0.2f;
     private const float JumpForce = 5f;
-    private const string JumpTriggerParametar = "jump";
-    private const string RollTriggerParametar = "down";
+    private const string JumpTriggerParametar = "jump"; // CR: Na engleskom se pise Parameter :)
+    private const string RollTriggerParametar = "down"; // CR: Isto
     private const string RightBool = "right";
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject player; // CR: Posto smo vec u PlayerManager-u, bolje ime bi mozda bilo character (jer nam termin "Player" ima sire znacenje od 
     [SerializeField] private Transform leftPos;
     [SerializeField] private Transform centrePos;
     [SerializeField] private Transform rightPos;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private ParticleSystem collect;
-    [SerializeField] private ParticleSystem boom;
-    [SerializeField] private GameObject fireParticlePrefab;
-    public Animator PlayerAnim;
-    public BoxCollider CollectorColider;
-    private Rigidbody playerRb;
-    private BoxCollider playerBoxCollider;
+    [SerializeField] private ParticleSystem collect; // CR: collectibleParticle bi bilo bolje ime
+    [SerializeField] private ParticleSystem boom; // CR: boomParticle
+    [SerializeField] private GameObject fireParticlePrefab; // CR: Ako je ovo prefab za projektil generalno, bolje ga nazovi fireProjectilePrefab. Ne interesuje nas da li je particle ili ne, interesuje nas sta predstavlja to sto instanciramo.
+    public Animator PlayerAnim; // CR: Nema potrebe za skracivanjem ovde, ali ni za recju Player (posto smo vec u *Player*Controlleru). Mozes recimo CharacterAnimator.
+    public BoxCollider CollectorColider; // CR: Mozda CollectibleCollider ili CollectionCollider ovde bolje lezi
+    private Rigidbody playerRb; // CR: characterRb
+    private BoxCollider playerBoxCollider; // CR: Posto vec imas jedan dedicated collider za collectables, bilo bi dobro da ime i ovog collidera eksplicitno objasni za sta on sluzi.
 
     private bool isTransitioning = false;
     private bool isGrounded;
@@ -35,9 +35,11 @@ public class PlayerManager : MonoBehaviour
         playerBoxCollider = player.GetComponent<BoxCollider>();
     }
 
-    private void Update()
+    private void Update() // CR: Uoci kako si komentarima podelila ovu veliku funkciju u 4 odvojene operacije. Svaka od tih operacija treba da se izdvoji u svoju metodu, pa da se te metode samo pozovu odavde.
     {
-        //Defining in witch row player is moving
+        //Defining in which row player is moving
+		// CR: Uoci kako ti svi uslovi u ovoj sekciji imaju && !isTransitioning. Ovo ti je znak da mozes da izdvojis taj uslov nivo iznad.
+		// CR: Da li primecujes slicnost izmedju ovog koda i koda koji menja GameState u GameManager-u? Razmisli o tome pa cemo da caskamo.
         if (Input.GetKeyDown(KeyCode.RightArrow) && transform.position == centrePos.position && !isTransitioning)
         {
             PlayerAnim.SetBool(RightBool, true);
@@ -76,7 +78,7 @@ public class PlayerManager : MonoBehaviour
             ShootFireParticle();
         }
     }
-    private void ShootFireParticle()
+    private void ShootFireParticle() // CR: Funkcija treba da opisuje operaciju, ne konkretnu implementaciju. Drugim recima, ni ovde nas ne interesuje sto je u pitanju particle. ShootFireProjectile ili cak nesto tipa ShootFireball je bolji naziv.
     {
         GameObject fireParticle = ObjectPool.Instance.GetPooledObjectFire();
 
@@ -87,7 +89,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void Grounded()
+    public void Grounded() // CR: Ovo ne mora da bude metoda, samo napravi set property. 
     {
         isGrounded = true;
     }
@@ -110,7 +112,7 @@ public class PlayerManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void PlayerAnimation(GameState currentState)
+    public void PlayerAnimation(GameState currentState) // CR: Glagol. Npr. SetPlayerAnimation
     {
         switch (currentState)
         {
@@ -125,6 +127,7 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
     }
+
     public void RollDown()
     {
         playerBoxCollider.size = new Vector3(playerBoxCollider.size.x, 1.2f, playerBoxCollider.size.z);
@@ -137,11 +140,11 @@ public class PlayerManager : MonoBehaviour
         playerBoxCollider.center = new Vector3(playerBoxCollider.center.x, 0.956f, playerBoxCollider.center.z);
     }
 
-    public void CollectParticles()
+    public void CollectParticles() // CR: PlayCollectionParticle. Inace, primeti kako ime ove funkcije zvuci kao da player skuplja partikle
     {
         collect.Play();
     }
-    public void ExplosionParticle()
+    public void ExplosionParticle() // CR: PlayExplosionParticle
     {
         boom.Play();
     }

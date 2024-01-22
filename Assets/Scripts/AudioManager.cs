@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void BackgroundMusic()
+    public void BackgroundMusic() // CR: StartBackgroundMusic (ne Play zato sto kada je jednom pustimo, ona svira u kontinuitetu dok je ne zaustavimo)
     {
         if (!backgroundMusic.isPlaying)
         {
@@ -27,7 +27,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void CoinSound()
+    public void CoinSound() // CR: PlayCoinSound (ovde je Play jer pustimo zvuk, on se zavrsi sam i gotov je)
     {
         coinSound.Play();
     }

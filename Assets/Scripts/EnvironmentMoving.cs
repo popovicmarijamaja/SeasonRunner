@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnvironmentMoving : MonoBehaviour
+public class EnvironmentMoving : MonoBehaviour // CR: Ovo ti je zapravo EnvironmentController
 {
     private const string TurnEnvironmentOffTag = "turnEnvironmentOff";
 
@@ -18,7 +18,7 @@ public class EnvironmentMoving : MonoBehaviour
         Speed += GameManager.SpeedIncreasing * Time.deltaTime;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other) // CR: Zasto je ova logika ovde kada imas dedicated EnvironmentCollision skriptu na istom objektu? Ovo pripada tamo.
     {
         if (other.gameObject.CompareTag(TurnEnvironmentOffTag))
         {
