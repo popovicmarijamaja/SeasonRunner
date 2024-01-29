@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// CR: Ovoj klasi treba jedna fundamentalna izmena, pa cu tek onda da je prodjem za detalje. Kada zavrsis sve sitnice, cujemo se da usmeno popricamo o ovoj klasi.
 public class SpawnManager : MonoBehaviour
 {
     private const int NumberOfCoin = 11;
@@ -106,7 +105,7 @@ public class SpawnManager : MonoBehaviour
     private void SpawnPower()
     {
         float[] posForZ = { -1.2f, 0f, 1.2f };
-        float[] posForX = { -49f, -59f };
+        float[] posForX = { -49f, -57f };
         int randomIndexZ = Random.Range(0, 3);
         int randomIndexX = Random.Range(0, 2);
         float randomPosZ = posForZ[randomIndexZ];

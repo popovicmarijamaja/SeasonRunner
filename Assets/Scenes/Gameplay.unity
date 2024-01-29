@@ -24889,7 +24889,7 @@ MonoBehaviour:
   scoreText: {fileID: 339836680}
   youLostMenu: {fileID: 647751522}
   mainMenu: {fileID: 1469486972}
-  healthSlider: {fileID: 1133509524}
+  HealthSlider: {fileID: 1133509524}
 --- !u!4 &1096709364
 Transform:
   m_ObjectHideFlags: 0
@@ -45620,7 +45620,8 @@ MonoBehaviour:
   boomParticle: {fileID: 1219323360496963604}
   CharacterAnimator: {fileID: 705114769057625003}
   CollectibleCollider: {fileID: 1993283666}
-  hasGun: 0
+  IsShieldActive: 0
+  isMagnetActive: 0
   health: 0
 --- !u!1 &1993953749
 GameObject:
