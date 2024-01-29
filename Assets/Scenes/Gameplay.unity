@@ -216,10 +216,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5113956}
-  - component: {fileID: 5113955}
   - component: {fileID: 5113954}
+  - component: {fileID: 5113957}
+  - component: {fileID: 5113958}
   m_Layer: 0
-  m_Name: GetReadyEnvironment
+  m_Name: EmptyEnvironment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -238,18 +239,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.4702454, y: 1, z: 21.65689}
   m_Center: {x: -74.397354, y: 0, z: 1.3110523}
---- !u!114 &5113955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5113953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ddba8d804814774dbb03c10a9947e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5113956
 Transform:
   m_ObjectHideFlags: 0
@@ -267,6 +256,30 @@ Transform:
   m_Father: {fileID: 1283069496}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5113957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5113953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddba8d804814774dbb03c10a9947e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5113958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5113953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ac376f7242c9f4f8e1038194e86df5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8741226
 GameObject:
   m_ObjectHideFlags: 0
@@ -3670,8 +3683,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5667e72e7f24e54fbfd292f527d47ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  getReadyEnvironment: {fileID: 5113953}
-  newSectionPos: {fileID: 2038350245}
+  emptyEnvironment: {fileID: 5113953}
+  environmentSpawnPos: {fileID: 2038350245}
   playerManager: {fileID: 1993283667}
   totalScore: 0
 --- !u!4 &158068402
@@ -10822,7 +10835,7 @@ GameObject:
   - component: {fileID: 439192628}
   - component: {fileID: 439192627}
   m_Layer: 5
-  m_Name: quit
+  m_Name: Quit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10895,7 +10908,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1096709363}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: QuitButton
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17550,7 +17563,7 @@ GameObject:
   - component: {fileID: 739992148}
   - component: {fileID: 739992147}
   m_Layer: 5
-  m_Name: background
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22493,7 +22506,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1096709363}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: BackButton
+        m_MethodName: ResumeGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26362,7 +26375,7 @@ GameObject:
   - component: {fileID: 1182517005}
   - component: {fileID: 1182517004}
   m_Layer: 5
-  m_Name: youLostText
+  m_Name: YouLostText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28262,7 +28275,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1096709363}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: QuitButton
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -29585,9 +29598,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environment: {fileID: 1555494929363657981, guid: d109da4c838e06e44a3e7fc8c583613e,
     type: 3}
-  fireParticle: {fileID: 8809325100643378449, guid: e54001a83cc50e34dac0786b9383cc9e,
+  fireball: {fileID: 8809325100643378449, guid: e54001a83cc50e34dac0786b9383cc9e,
     type: 3}
-  pooledObjectsEnvironment: []
+  bullet: {fileID: 1946528075328561982, guid: 766d20c9182f7e14691f92cdee954828, type: 3}
+  rock: {fileID: 9075382009730815078, guid: 8dc305f018716a644b81208da0bd56d5, type: 3}
+  woodenObstacle: {fileID: 7997515473177360302, guid: 97a10892c5334ab4ea22d400a8401cc1,
+    type: 3}
+  mushrooms: {fileID: 7796370217289711012, guid: fe1b34414c14c224fb8a6e0cf6e00731,
+    type: 3}
+  star: {fileID: 5951336402657900125, guid: 1046d2c4047a9cb4593e5714e9915af4, type: 3}
+  coin: {fileID: 2544390476272471407, guid: 4a320ab1a0cd85649b383574fef77b92, type: 3}
+  magnet: {fileID: 6968704788717175121, guid: 68f304fecd1defe4f87b5959445bc7e4, type: 3}
+  healthPack: {fileID: 1790190158351776602, guid: 73a52bc9cab9e0d478993f03d157a177,
+    type: 3}
+  shield: {fileID: 6450428026335650160, guid: ab93af993b7cadf4898b0feaff428417, type: 3}
+  enemy: {fileID: 7778625762149928996, guid: 970d6f1e6146f4842a819f10fa6e490d, type: 3}
+  gun: {fileID: 8866106083991393466, guid: 487b611decb0058488e977d014154298, type: 3}
+  shootingEnemy: {fileID: 1556518459469489251, guid: bacdd460b798eae4f9fb5802eb28b3bd,
+    type: 3}
+  EnvirontmentPool: []
+  isInitialized: 0
 --- !u!4 &1294698042
 Transform:
   m_ObjectHideFlags: 0
@@ -29952,7 +29982,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1096709363}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: PauseButton
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -30993,9 +31023,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 158068401}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: Play
+      - m_Target: {fileID: 1096709363}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: PLayGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -35489,7 +35519,7 @@ GameObject:
   - component: {fileID: 1497008966}
   - component: {fileID: 1497008965}
   m_Layer: 5
-  m_Name: doYouWantToPlayAgainText
+  m_Name: DoYouWantToPlayAgainText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39905,7 +39935,7 @@ GameObject:
   - component: {fileID: 1737147548}
   - component: {fileID: 1737147547}
   m_Layer: 5
-  m_Name: yesButton
+  m_Name: YesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39978,7 +40008,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1096709363}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: PlayButton
+        m_MethodName: LoadGameplayScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -45581,17 +45611,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9357838e7b9dd454f8c2abf0407decf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 705114769057625002}
+  character: {fileID: 705114769057625002}
   leftPos: {fileID: 1833237859}
   centrePos: {fileID: 1855667637}
   rightPos: {fileID: 1635550418}
   firePoint: {fileID: 698280505}
-  collect: {fileID: 7686998315073032463}
-  boom: {fileID: 1219323360496963604}
-  fireParticlePrefab: {fileID: 8809325100643378449, guid: e54001a83cc50e34dac0786b9383cc9e,
-    type: 3}
-  PlayerAnim: {fileID: 705114769057625003}
-  CollectorColider: {fileID: 1993283666}
+  collectibleParticle: {fileID: 7686998315073032463}
+  boomParticle: {fileID: 1219323360496963604}
+  CharacterAnimator: {fileID: 705114769057625003}
+  CollectibleCollider: {fileID: 1993283666}
+  hasGun: 0
+  health: 0
 --- !u!1 &1993953749
 GameObject:
   m_ObjectHideFlags: 0
@@ -46053,7 +46083,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2038350245}
   m_Layer: 0
-  m_Name: NewSectionSpawnLocation
+  m_Name: EnvironmentSpawnPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,7 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject youLostMenu;
     [SerializeField] private GameObject mainMenu;
-    public Slider healthSlider;
+    public Slider HealthSlider;
 
     private void Awake()
     {
@@ -24,9 +24,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void PauseMenu(GameState currentState)
+    public void PLayGame()
     {
-        if (currentState == GameState.Pause)
+        GameManager.Instance.PlayGame();
+    }
+
+    public void TogglePauseMenu(GameState currentState)
+    {
+        if (currentState == GameState.Paused)
         {
             pauseMenu.SetActive(true);
         }
@@ -36,17 +41,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void Play()
+    public void HideMainMenu()
     {
         mainMenu.SetActive(false);
     }
 
-    public void ScoreText(int totalScore)
+    public void UpdateScoreText(int totalScore)
     {
         scoreText.text = "SCORE: " + totalScore;
     }
 
-    public void YouLostMenu(GameState currentState)
+    public void ToggleGameOverMenu(GameState currentState)
     {
         if (currentState == GameState.GameOver)
         {
@@ -58,28 +63,28 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void HealthSlider(int health)
+    public void UpdateHealthSlider(int health)
     {
-        healthSlider.value = health;
+        HealthSlider.value = health;
     }
 
-    public void PlayButton()
+    public void LoadGameplayScene()
     {
         GameManager.Instance.LoadGameplayScene();
     }
 
-    public void QuitButton()
+    public void QuitGame()
     {
         GameManager.Instance.Quit();
     }
 
-    public void PauseButton()
+    public void PauseGame()
     {
         GameManager.Instance.PauseGame();
     }
 
-    public void BackButton()
+    public void ResumeGame()
     {
-        GameManager.Instance.Play();
+        GameManager.Instance.PlayGame();
     }
 }

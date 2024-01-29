@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void BackgroundMusic()
+    public void StartBackgroundMusic()
     {
         if (!backgroundMusic.isPlaying)
         {
@@ -27,7 +27,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void CoinSound()
+    public void PlayCoinSound()
     {
         coinSound.Play();
     }

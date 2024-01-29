@@ -14464,8 +14464,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1555494929363657982}
   - component: {fileID: 4784181995634722470}
-  - component: {fileID: 539336689372208209}
   - component: {fileID: 8474410265181086918}
+  - component: {fileID: 4538759773983300974}
   m_Layer: 0
   m_Name: environment
   m_TagString: Untagged
@@ -14506,18 +14506,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.3896027, y: 1.4012475, z: 25.899097}
   m_Center: {x: -76.367, y: -0.4573959, z: 1.2662296}
---- !u!114 &539336689372208209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1555494929363657981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ddba8d804814774dbb03c10a9947e9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8474410265181086918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14530,7 +14518,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8ac376f7242c9f4f8e1038194e86df5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  child: {fileID: 4113471985566553102}
+--- !u!114 &4538759773983300974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555494929363657981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddba8d804814774dbb03c10a9947e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1571490823392106285
 GameObject:
   m_ObjectHideFlags: 0
@@ -38279,26 +38278,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42353c5cea794fe44afaf17545af115e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rockPrefab: {fileID: 9075382009730815078, guid: 8dc305f018716a644b81208da0bd56d5,
-    type: 3}
-  woodenObstaclePrefab: {fileID: 7997515473177360302, guid: 97a10892c5334ab4ea22d400a8401cc1,
-    type: 3}
-  mushroomPrefab: {fileID: 7796370217289711012, guid: fe1b34414c14c224fb8a6e0cf6e00731,
-    type: 3}
-  starPrefab: {fileID: 5951336402657900125, guid: 1046d2c4047a9cb4593e5714e9915af4,
-    type: 3}
-  coinPrefab: {fileID: 2544390476272471407, guid: 4a320ab1a0cd85649b383574fef77b92,
-    type: 3}
-  magnetPrefab: {fileID: 6968704788717175121, guid: 68f304fecd1defe4f87b5959445bc7e4,
-    type: 3}
-  healthPackPrefab: {fileID: 1790190158351776602, guid: 73a52bc9cab9e0d478993f03d157a177,
-    type: 3}
-  shieldPrefab: {fileID: 6450428026335650160, guid: ab93af993b7cadf4898b0feaff428417,
-    type: 3}
-  enemyPrefab: {fileID: 7778625762149928996, guid: 970d6f1e6146f4842a819f10fa6e490d,
-    type: 3}
-  gunPrefab: {fileID: 8866106083991393466, guid: 487b611decb0058488e977d014154298,
-    type: 3}
 --- !u!1 &4114513575814564959
 GameObject:
   m_ObjectHideFlags: 0

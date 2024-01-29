@@ -45,7 +45,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 0.6207441, b: 0.20392156, a: 1}
-  m_Intensity: 4.684208
+  m_Intensity: 4.6727095
   m_Range: 8
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 1926666609381148684}
   - component: {fileID: 7512558560257766404}
   m_Layer: 0
-  m_Name: Fire
+  m_Name: Fireball
   m_TagString: fire
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5116,7 +5116,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!135 &7512558560257766404
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5128,8 +5128,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.98303056
-  m_Center: {x: -0.058830578, y: -0.032878716, z: 0.036107898}
+  m_Radius: 0.561689
+  m_Center: {x: -0.48017213, y: -0.032878716, z: 0.036107898}
 --- !u!1 &8809325101137727450
 GameObject:
   m_ObjectHideFlags: 0

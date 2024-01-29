@@ -2,94 +2,159 @@ using UnityEngine;
 using System.Collections;
 public class PlayerManager : MonoBehaviour
 {
+    public const int HealthMaxValue = 4;
+    public const int HealthMinValue = 0;
+    private const float GunDuration = 5f;
+    private const float ShieldDuration = 5f;
     private const float TransitionDuration = 0.2f;
     private const float JumpForce = 5f;
-    private const string JumpTriggerParametar = "jump";
-    private const string RollTriggerParametar = "down";
+    private const string JumpTriggerParameter = "jump";
+    private const string RollTriggerParameter = "down";
     private const string RightBool = "right";
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject character;
     [SerializeField] private Transform leftPos;
     [SerializeField] private Transform centrePos;
     [SerializeField] private Transform rightPos;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private ParticleSystem collect;
-    [SerializeField] private ParticleSystem boom;
-    [SerializeField] private GameObject fireParticlePrefab;
-    public Animator PlayerAnim;
-    public BoxCollider CollectorColider;
-    private Rigidbody playerRb;
-    private BoxCollider playerBoxCollider;
+    [SerializeField] private ParticleSystem collectibleParticle;
+    [SerializeField] private ParticleSystem boomParticle;
+    public Animator CharacterAnimator;
+    public BoxCollider CollectibleCollider;
+    private Rigidbody characterRb;
+    private BoxCollider characterBoxCollider;
 
     private bool isTransitioning = false;
-    private bool isGrounded;
-    public bool hasGun;
+    public bool IsShieldActive = false;
+    public bool isMagnetActive = false;
+    private bool isGunActive = false;
+    public int health;
 
+    private bool isGrounded;
+    public bool IsGrounded
+    {
+        get { return isGrounded; }
+        set { isGrounded = value; }
+    }
     private void Awake()
     {
-        PlayerAnim = player.GetComponent<Animator>();
-        CollectorColider = GetComponent<BoxCollider>();
-        playerRb = player.GetComponent<Rigidbody>();
-        playerBoxCollider = player.GetComponent<BoxCollider>();
+        CharacterAnimator = character.GetComponent<Animator>();
+        CollectibleCollider = GetComponent<BoxCollider>();
+        characterRb = character.GetComponent<Rigidbody>();
+        characterBoxCollider = character.GetComponent<BoxCollider>();
+    }
+    private void Start()
+    {
+        health = HealthMaxValue;
     }
 
     private void Update()
     {
-        //Defining in witch row player is moving
-        if (Input.GetKeyDown(KeyCode.RightArrow) && transform.position == centrePos.position && !isTransitioning)
+        HandleMovementInput();
+        HandleJumpInput();
+        HandleRollInput();
+        HandleShootInput();
+    }
+
+    private void HandleMovementInput()
+    {
+        if (!isTransitioning)
         {
-            PlayerAnim.SetBool(RightBool, true);
-            StartCoroutine(MoveToPosition(rightPos.position));
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (transform.position == centrePos.position)
+                {
+                    SetCharacterAnimation(RightBool);
+                    StartCoroutine(MoveToPosition(rightPos.position));
+                }
+                else if (transform.position == leftPos.position)
+                {
+                    SetCharacterAnimation(RightBool);
+                    StartCoroutine(MoveToPosition(centrePos.position));
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (transform.position == centrePos.position)
+                {
+                    SetCharacterAnimation(LeftBool);
+                    StartCoroutine(MoveToPosition(leftPos.position));
+                }
+                else if (transform.position == rightPos.position)
+                {
+                    SetCharacterAnimation(LeftBool);
+                    StartCoroutine(MoveToPosition(centrePos.position));
+                }
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && transform.position == leftPos.position && !isTransitioning)
-        {
-            PlayerAnim.SetBool(RightBool, true);
-            StartCoroutine(MoveToPosition(centrePos.position));
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && transform.position == centrePos.position && !isTransitioning)
-        {
-            PlayerAnim.SetBool(LeftBool, true);
-            StartCoroutine(MoveToPosition(leftPos.position));
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) && transform.position == rightPos.position && !isTransitioning)
-        {
-            PlayerAnim.SetBool(LeftBool, true);
-            StartCoroutine(MoveToPosition(centrePos.position));
-        }
-        //Player jump
+    }
+
+    private void HandleJumpInput()
+    {
         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
-            PlayerAnim.SetTrigger(JumpTriggerParametar);
-            playerRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+            CharacterAnimator.SetTrigger(JumpTriggerParameter);
+            characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             isGrounded = false;
         }
-        //Player roll down
-        if (Input.GetKeyDown(KeyCode.DownArrow) && isGrounded)
-        {
-            PlayerAnim.SetTrigger(RollTriggerParametar);
-        }
-        //Player shoot
-        if (Input.GetKeyDown(KeyCode.Space) && hasGun)
-        {
-            ShootFireParticle();
-        }
     }
-    private void ShootFireParticle()
-    {
-        GameObject fireParticle = ObjectPool.Instance.GetPooledObjectFire();
 
-        if (fireParticle != null)
+    private void HandleRollInput()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            fireParticle.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
-            fireParticle.SetActive(true);
+            CharacterAnimator.SetTrigger(RollTriggerParameter);
         }
     }
 
-    public void Grounded()
+    private void HandleShootInput()
     {
-        isGrounded = true;
+        if (Input.GetKeyDown(KeyCode.Space) && isGunActive)
+        {
+            ShootFireball();
+        }
+    }
+
+    private void SetCharacterAnimation(string boolName)
+    {
+        CharacterAnimator.SetBool(boolName, true);
+    }
+
+    private void ShootFireball()
+    {
+        GameObject fireball = ObjectPool.Instance.GetFireball();
+
+        if (fireball != null)
+        {
+            fireball.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
+            fireball.SetActive(true);
+        }
+    }
+
+    public void ActivateGun()
+    {
+        StartCoroutine(GunCountDown());
+    }
+
+    private IEnumerator GunCountDown()
+    {
+        isGunActive = true;
+        yield return new WaitForSeconds(GunDuration);
+        isGunActive = false;
+    }
+
+    public void ActivateShield()
+    {
+        StartCoroutine(ShieldCountDown());
+    }
+
+    private IEnumerator ShieldCountDown()
+    {
+        IsShieldActive = true;
+        yield return new WaitForSeconds(ShieldDuration);
+        IsShieldActive = false;
     }
 
     private IEnumerator MoveToPosition(Vector3 targetPosition)
@@ -104,45 +169,56 @@ public class PlayerManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        PlayerAnim.SetBool(RightBool, false);
-        PlayerAnim.SetBool(LeftBool, false);
+        CharacterAnimator.SetBool(RightBool, false);
+        CharacterAnimator.SetBool(LeftBool, false);
         transform.position = targetPosition;
         isTransitioning = false;
     }
 
-    public void PlayerAnimation(GameState currentState)
+    public void SetPlayerAnimation(GameState currentState)
     {
         switch (currentState)
         {
             case GameState.Playing:
-                PlayerAnim.enabled = true;
+                CharacterAnimator.enabled = true;
                 break;
             case GameState.GameOver:
-                PlayerAnim.SetBool(DeathAnimBool, true);
+                CharacterAnimator.SetBool(DeathAnimBool, true);
                 break;
             default:
-                PlayerAnim.enabled = false;
+                CharacterAnimator.enabled = false;
                 break;
         }
     }
+
+    public void DecreaseHealth()
+    {
+        health--;
+    }
+
+    public void IncreaseHealth()
+    {
+        health++;
+    }
+
     public void RollDown()
     {
-        playerBoxCollider.size = new Vector3(playerBoxCollider.size.x, 1.2f, playerBoxCollider.size.z);
-        playerBoxCollider.center = new Vector3(playerBoxCollider.center.x, 0f, playerBoxCollider.center.z);
+        characterBoxCollider.size = new Vector3(characterBoxCollider.size.x, 1.2f, characterBoxCollider.size.z);
+        characterBoxCollider.center = new Vector3(characterBoxCollider.center.x, 0f, characterBoxCollider.center.z);
     }
 
     public void RollUp()
     {
-        playerBoxCollider.size = new Vector3(playerBoxCollider.size.x, 2f, playerBoxCollider.size.z);
-        playerBoxCollider.center = new Vector3(playerBoxCollider.center.x, 0.956f, playerBoxCollider.center.z);
+        characterBoxCollider.size = new Vector3(characterBoxCollider.size.x, 2f, characterBoxCollider.size.z);
+        characterBoxCollider.center = new Vector3(characterBoxCollider.center.x, 0.956f, characterBoxCollider.center.z);
     }
 
-    public void CollectParticles()
+    public void PlayCollectionParticle()
     {
-        collect.Play();
+        collectibleParticle.Play();
     }
-    public void ExplosionParticle()
+    public void PlayExplosionParticle()
     {
-        boom.Play();
+        boomParticle.Play();
     }
 }
