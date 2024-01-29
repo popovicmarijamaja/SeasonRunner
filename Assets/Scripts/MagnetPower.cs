@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// CR: Kad zavrsis ostalo, hajde da se cujemo oko ove klase da mi objasnis celu logiku.
 public class MagnetPower : MonoBehaviour
 {
     private const float CoinSpeed = 20f;

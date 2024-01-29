@@ -50,7 +50,7 @@ public class PlayerManager : MonoBehaviour
         health = HealthMaxValue;
     }
 
-    private void Update()
+    private void Update() // CR: Uoci kako si komentarima podelila ovu veliku funkciju u 4 odvojene operacije. Svaka od tih operacija treba da se izdvoji u svoju metodu, pa da se te metode samo pozovu odavde.
     {
         HandleMovementInput();
         HandleJumpInput();

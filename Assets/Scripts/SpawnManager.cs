@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// CR: Ovoj klasi treba jedna fundamentalna izmena, pa cu tek onda da je prodjem za detalje. Kada zavrsis sve sitnice, cujemo se da usmeno popricamo o ovoj klasi.
 public class SpawnManager : MonoBehaviour
 {
     private const int NumberOfCoin = 11;
