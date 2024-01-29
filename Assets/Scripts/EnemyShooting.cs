@@ -3,26 +3,31 @@ using UnityEngine;
 public class EnemyShooting : MonoBehaviour
 {
     private const string PlayerTag = "Player";
-    private const string DeathParameter = "death";
+    private const string AliveParameter = "alive";
+    private const string ShootParameter = "shoot";
 
     [SerializeField] private Transform firePoint;
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private BoxCollider CharacterBoxCollider;
     private BoxCollider detector;
+
     private void Awake()
     {
         detector = GetComponent<BoxCollider>();
     }
+
     private void Update()
     {
-        if (characterAnimator.GetBool(DeathParameter))
+        if (!characterAnimator.GetBool(AliveParameter))
         {
             detector.enabled = false;
             CancelInvoke();
         }
     }
+
     private void Shooting()
     {
+        characterAnimator.SetBool(ShootParameter, true);
         GameObject bullet = ObjectPool.Instance.GetBullet();
 
         if (bullet != null)
@@ -31,6 +36,7 @@ public class EnemyShooting : MonoBehaviour
             bullet.SetActive(true);
         }
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(PlayerTag))
@@ -38,6 +44,7 @@ public class EnemyShooting : MonoBehaviour
             InvokeRepeating(nameof(Shooting), 0f, 1.2f);
         }
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag(PlayerTag))
@@ -45,9 +52,10 @@ public class EnemyShooting : MonoBehaviour
             CancelInvoke();
         }
     }
+
     private void OnEnable()
     {
-        characterAnimator.SetBool(DeathParameter, false);
-        CharacterBoxCollider.enabled = true;
+        detector.enabled = true;
+        characterAnimator.SetBool(ShootParameter, false);
     }
 }

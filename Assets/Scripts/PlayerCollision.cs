@@ -94,8 +94,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag(MagnetTag))
         {
             other.gameObject.SetActive(false);
-            playerManager.isMagnetActive = true;
-            GameManager.Instance.ActivateMagnet();
+            playerManager.ActivateMagnet();
         }
     }
 

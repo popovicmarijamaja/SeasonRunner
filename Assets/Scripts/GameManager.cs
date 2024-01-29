@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     private const int PlayerHealthMin = PlayerManager.HealthMinValue;
     private const int PlayerHealthMax = PlayerManager.HealthMaxValue;
     public const float SpeedIncrement = 0.03f;
-    private const float MagnetDuration = 6f;
     private const string GameplayScene = "Gameplay";
 
     [SerializeField] private GameObject emptyEnvironment;
@@ -122,26 +121,6 @@ public class GameManager : MonoBehaviour
     {
         PlayCollectSoundAndParticle();
         coinScore += 50;
-    }
-
-    public void ActivateMagnet()
-    {
-        PlayCollectSoundAndParticle();
-        if (playerManager.isMagnetActive)
-        {
-            StopCoroutine(MagnetCountDown());
-        }
-
-        playerManager.isMagnetActive = true;
-        StartCoroutine(MagnetCountDown());
-    }
-
-    private IEnumerator MagnetCountDown()
-    {
-        playerManager.CollectibleCollider.enabled = true;
-        yield return new WaitForSeconds(MagnetDuration);
-        playerManager.CollectibleCollider.enabled = false;
-        playerManager.isMagnetActive = false;
     }
 
     private void PlayCollectSoundAndParticle()

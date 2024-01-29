@@ -45562,6 +45562,7 @@ GameObject:
   - component: {fileID: 1993283665}
   - component: {fileID: 1993283666}
   - component: {fileID: 1993283667}
+  - component: {fileID: 1993283668}
   m_Layer: 0
   m_Name: PlayerRoot
   m_TagString: PlayerRoot
@@ -45618,11 +45619,25 @@ MonoBehaviour:
   firePoint: {fileID: 698280505}
   collectibleParticle: {fileID: 7686998315073032463}
   boomParticle: {fileID: 1219323360496963604}
+  powerUpManager: {fileID: 0}
   CharacterAnimator: {fileID: 705114769057625003}
   CollectibleCollider: {fileID: 1993283666}
   IsShieldActive: 0
   isMagnetActive: 0
+  isGunActive: 0
   health: 0
+--- !u!114 &1993283668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1993283663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244339644ef39274bbac8d6da6d52d97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1993953749
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,8 +4,6 @@ public class PlayerManager : MonoBehaviour
 {
     public const int HealthMaxValue = 4;
     public const int HealthMinValue = 0;
-    private const float GunDuration = 5f;
-    private const float ShieldDuration = 5f;
     private const float TransitionDuration = 0.2f;
     private const float JumpForce = 5f;
     private const string JumpTriggerParameter = "jump";
@@ -21,15 +19,16 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
+    private PowerUpManager powerUpManager;
     public Animator CharacterAnimator;
     public BoxCollider CollectibleCollider;
     private Rigidbody characterRb;
     private BoxCollider characterBoxCollider;
 
-    private bool isTransitioning = false;
     public bool IsShieldActive = false;
     public bool isMagnetActive = false;
-    private bool isGunActive = false;
+    public bool isGunActive = false;
+    private bool isTransitioning = false;
     public int health;
 
     private bool isGrounded;
@@ -44,13 +43,14 @@ public class PlayerManager : MonoBehaviour
         CollectibleCollider = GetComponent<BoxCollider>();
         characterRb = character.GetComponent<Rigidbody>();
         characterBoxCollider = character.GetComponent<BoxCollider>();
+        powerUpManager = GetComponent<PowerUpManager>();
     }
     private void Start()
     {
         health = HealthMaxValue;
     }
 
-    private void Update() // CR: Uoci kako si komentarima podelila ovu veliku funkciju u 4 odvojene operacije. Svaka od tih operacija treba da se izdvoji u svoju metodu, pa da se te metode samo pozovu odavde.
+    private void Update() 
     {
         HandleMovementInput();
         HandleJumpInput();
@@ -133,30 +133,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void ActivateGun()
-    {
-        StartCoroutine(GunCountDown());
-    }
-
-    private IEnumerator GunCountDown()
-    {
-        isGunActive = true;
-        yield return new WaitForSeconds(GunDuration);
-        isGunActive = false;
-    }
-
-    public void ActivateShield()
-    {
-        StartCoroutine(ShieldCountDown());
-    }
-
-    private IEnumerator ShieldCountDown()
-    {
-        IsShieldActive = true;
-        yield return new WaitForSeconds(ShieldDuration);
-        IsShieldActive = false;
-    }
-
     private IEnumerator MoveToPosition(Vector3 targetPosition)
     {
         isTransitioning = true;
@@ -189,6 +165,21 @@ public class PlayerManager : MonoBehaviour
                 CharacterAnimator.enabled = false;
                 break;
         }
+    }
+
+    public void ActivateShield()
+    {
+        powerUpManager.ActivatingShield();
+    }
+
+    public void ActivateGun()
+    {
+        powerUpManager.ActivatingGun();
+    }
+
+    public void ActivateMagnet()
+    {
+        powerUpManager.ActivatingMagnet();
     }
 
     public void DecreaseHealth()

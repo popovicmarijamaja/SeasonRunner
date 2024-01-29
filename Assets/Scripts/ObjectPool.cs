@@ -181,7 +181,7 @@ public class ObjectPool : MonoBehaviour
     {
         foreach (GameObject obj in starPool)
         {
-            if (!obj.activeInHierarchy)
+            if (!obj.activeInHierarchy && obj.transform.parent == transform.parent)
             {
                 return obj;
             }
