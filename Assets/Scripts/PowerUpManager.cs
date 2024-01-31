@@ -14,14 +14,14 @@ public class PowerUpManager : MonoBehaviour
         playerManager = GetComponent<PlayerManager>();
     }
 
-    public void ActivatingMagnet()
+    public void ActivatingMagnet() // CR: Activate, radije nago Activating. Kada pozivas funkciju, ti dajes naredbu programu. Citljivije je ako je ime kao imperativ.
     {
         if (playerManager.isMagnetActive)
         {
             StopCoroutine(MagnetCountDown());
         }
 
-        playerManager.isMagnetActive = true;
+        playerManager.isMagnetActive = true; // CR: Ovo je zgodno da se uradi na pocetku korutine, posto se u njoj postavlja i na false na kraju.
         StartCoroutine(MagnetCountDown());
     }
 
@@ -40,7 +40,7 @@ public class PowerUpManager : MonoBehaviour
             StopCoroutine(GunCountDown());
         }
 
-        playerManager.isGunActive = true;
+        playerManager.isGunActive = true; // CR: Kao i gore. Ovde cak imas dupliciranu ovu liniju i ovde i u korutini.
         StartCoroutine(GunCountDown());
     }
 
@@ -58,7 +58,7 @@ public class PowerUpManager : MonoBehaviour
             StopCoroutine(ShieldCountDown());
         }
 
-        playerManager.IsShieldActive = true;
+        playerManager.IsShieldActive = true; // CR: Isto kao i gore.
         StartCoroutine(ShieldCountDown());
     }
 

@@ -12,6 +12,7 @@ public class ObjectPool : MonoBehaviour
     private const int ObstaclesPoolSize = 11;
     private const int NumberOfRockInLine = 2;
 
+	// CR: Zgodno je da ova polja imaju u nazivu Prefab, npr. enviromentPrefab, da bi bilo eksplicitno sta su
     [SerializeField] private GameObject environment;
     [SerializeField] private GameObject fireball;
     [SerializeField] private GameObject bullet;
@@ -201,6 +202,7 @@ public class ObjectPool : MonoBehaviour
         return null;
     }
 
+	// CR: Ovo bi moglo da bude GetBasicEnemy ili tako nesto. Posto je i ShootingEnemy nekakav Enemy, ovo moze da zvuci kao generalna funkcija koja vraca bilo kojeg neprijatelja.
     public GameObject GetEnemy()
     {
         foreach (GameObject obj in enemyPool)

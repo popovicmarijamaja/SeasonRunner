@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    private const int NumberOfCoin = 11;
-    private const int NumberOfObstacles = 11;
+    private const int NumberOfCoin = 11; // CR: Broj novcica po cemu? Je l' ovo predstavlja maksimalni broj novcica na ekranu? Maksimalni broj novcica po chunk-u? Ili je broj novcica po chunk-u fiksno 11? Koji god da je slucaj, ime treba nedvosmisleno da ilustruje to.
+    private const int NumberOfObstacles = 11; // CR: Ista stvar.
+	// CR: Ovo podesavanje pozicija ti je hak. Nije velika stvar, ali definitivno na neki nacin zaobilazis problem. Bilo bi bolje da u samim assetima nekako resis ovo neslaganje po Y i ucinis ih konzistentnim.
     private const float RCSGPosY = 0.5f; //for rock, coin, shield, star and gun
     private const float WEMPosY = 0f; //for wooden obstacle, enemy and mushrooms
     private const float DistanceBetweenObstacles = -7.7f;
@@ -22,6 +23,8 @@ public class SpawnManager : MonoBehaviour
         float chance;
         float prevZ = 0f;
         float neutralPosZ = 0f;
+		// CR: I ovde bi bilo dobro da se ove nekonzistentnosti u pozicijama rese na nivou samih asseta.
+		// Takodje, u pitanju su z-pozicije, sto treba da se odrazi u nazivu ova dva polja
         float[] pos = { -0.5f, 0.5f, 1.6f };
         float[] posME = { -1, 0, 1 }; // Pos for mushrooms and shooting enemy
         
@@ -33,6 +36,7 @@ public class SpawnManager : MonoBehaviour
             randomIndex = Random.Range(0, 3);
             randomPosZ = pos[randomIndex];
 
+			// CR: Ovu sansu mozemo elegantnije da resimo
             // 50% chance for 1 rock in line
             if (chance <= 0.5f)
             {
@@ -71,12 +75,13 @@ public class SpawnManager : MonoBehaviour
                 randomPosZ = posME[randomIndex];
                 SpawnObject(ObjectPool.Instance.GetMushrooms(), posX, WEMPosY, randomPosZ, Quaternion.Euler(0, 0, 0));
             }
+			// CR: Ovo je dobro mesto za jos jedan nivo logike
             // 5% chance for enemy
             else if (chance > 0.9f && chance <= 0.95f)
             {
                 SpawnObject(ObjectPool.Instance.GetEnemy(), posX, WEMPosY, neutralPosZ, Quaternion.Euler(0, 0, 0));
             }
-            // 10% chance for shooting enemy
+            // 5% chance for shooting enemy
             else if (chance > 0.95f)
             {
                 randomPosZ = posME[randomIndex];
@@ -85,7 +90,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    private void SpawnCoin()
+    private void SpawnCoin() // CR: Ako funkcija spawnuje vise od jednog novcica, treba da se zove SpawnCoins
     {
         float randomPosZ;
         float posX;
@@ -102,7 +107,7 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    private void SpawnPower()
+    private void SpawnPower() // CR: SpawnPowerUp bi bilo bolje, posto tu terminologiju koristimo
     {
         float[] posForZ = { -1.2f, 0f, 1.2f };
         float[] posForX = { -49f, -57f };
@@ -112,6 +117,7 @@ public class SpawnManager : MonoBehaviour
         float randomPosX = posForX[randomIndexX];
         float chance = Random.value;
 
+		// CR: I ovde sanse mozemo elegantnije
         // Rest of chance fo nothing --> 20%
 
         // 20% chance for magnet
@@ -149,7 +155,7 @@ public class SpawnManager : MonoBehaviour
 
     private (float,float) MakeDiferentPos(float[] pos, float firstPos, float secondPos)
     {
-        firstPos = secondPos;
+        firstPos = secondPos; // CR: Ovo nicemu ne sluzi, posto imas do-while a ne while. Takodje, firstPos ne treba da bude parametar nego lokalna promenljiva
         do
         {
             int randomIndex = Random.Range(0, 3);

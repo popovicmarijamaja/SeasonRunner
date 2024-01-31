@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
         playerManager.PlayCollectionParticle();
     }
 
-    public void SpawnNewSection()
+    public void SpawnNewSection() // CR: Ovo pripada u SpawnManageru
     {
         GameObject environment = ObjectPool.Instance.GetEnvironment();
         if (environment != null)
@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GetHurt()
+    public void GetHurt() // CR: Ko biva povredjen? Ne GameManager, to je sigurno :D DamagePlayer bi bio bolji naziv.
     {
         playerManager.DecreaseHealth();
         UIManager.Instance.UpdateHealthSlider(playerManager.health);
