@@ -17,10 +17,16 @@ public class EnemyController : MonoBehaviour
         detector = GetComponent<BoxCollider>();
     }
 
-    public void SetEnemy()
+    public void InnateEnemy(EnemyData enemyType)
     {
+        SetEnemyData(enemyType);
         AddBehaviourScripts();
         SetComponentsToDefault();
+    }
+
+    private void SetEnemyData(EnemyData enemyType)
+    {
+        enemyData = enemyType;
     }
 
     private void AddBehaviourScripts()

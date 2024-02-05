@@ -32,28 +32,28 @@ public class SpawnManager : MonoBehaviour
 
             switch (ChanceManager.Instance.ChooseObstacleType())
             {
-                case 1:
+                case ObstacleType.OneRock:
                     SpawnOneRock(posX, randomPosZ);
                     break;
-                case 2:
+                case ObstacleType.TwoRocks:
                     SpawnTwoRocks(posX, randomPosZ, posForZ);
                     break;
-                case 3:
+                case ObstacleType.WoodenObstacleWithStar:
                     SpawnWoodenObstacleWithStar(posX, neutralPosZ);
                     break;
-                case 4:
+                case ObstacleType.WoodenObstacleWithMushrooms:
                     SpawnWoodenObstacleWithMushrooms(posX, neutralPosZ);
                     break;
-                case 5:
+                case ObstacleType.WoodenObstacle:
                     SpawnWoodenObstacle(posX, neutralPosZ);
                     break;
-                case 6:
+                case ObstacleType.Mushrooms:
                     SpawnMushrooms(posX, randomPosZ);
                     break;
-                case 7:
+                case ObstacleType.WalkingSoldier:
                     SpawnWalkingSoldier(posX, neutralPosZ);
                     break;
-                case 8:
+                case ObstacleType.ShootingSoldier:
                     SpawnShootingSoldier(posX, randomPosZ);
                     break;
             }
@@ -111,8 +111,7 @@ public class SpawnManager : MonoBehaviour
     {
         GameObject walkingSoldier = ObjectPool.Instance.GetSoldier();
         SpawnObject(walkingSoldier, posX, neutralPosZ);
-        walkingSoldier.GetComponentInChildren<EnemyController>().enemyData = walkingEnemy;
-        walkingSoldier.GetComponentInChildren<EnemyController>().SetEnemy();
+        walkingSoldier.GetComponentInChildren<EnemyController>().InnateEnemy(walkingEnemy);
         walkingSoldier.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
@@ -120,8 +119,7 @@ public class SpawnManager : MonoBehaviour
     {
         GameObject shootingSoldier = ObjectPool.Instance.GetSoldier();
         SpawnObject(shootingSoldier, posX, randomPosZ);
-        shootingSoldier.GetComponentInChildren<EnemyController>().enemyData = shootingEnemy;
-        shootingSoldier.GetComponentInChildren<EnemyController>().SetEnemy();
+        shootingSoldier.GetComponentInChildren<EnemyController>().InnateEnemy(shootingEnemy);
         shootingSoldier.transform.rotation = Quaternion.Euler(0, 90, 0);
     }
 
@@ -153,16 +151,16 @@ public class SpawnManager : MonoBehaviour
 
         switch (ChanceManager.Instance.ChoosePowerUp())
         {
-            case 1:
+            case PowerUpType.Magnet:
                 SpawnObject(ObjectPool.Instance.GetMagnet(), randomPosX, randomPosZ);
                 break;
-            case 2:
+            case PowerUpType.HealthPack:
                 SpawnObject(ObjectPool.Instance.GetHealthPack(), randomPosX, randomPosZ);
                 break;
-            case 3:
+            case PowerUpType.Shield:
                 SpawnObject(ObjectPool.Instance.GetShield(), randomPosX, randomPosZ);
                 break;
-            case 4:
+            case PowerUpType.Gun:
                 SpawnObject(ObjectPool.Instance.GetGun(), randomPosX, randomPosZ);
                 break;
         }
