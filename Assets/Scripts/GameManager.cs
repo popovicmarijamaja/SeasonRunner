@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
         playerManager.PlayCollectionParticle();
     }
 
-    public void SpawnNewSection()
+    public void SpawnNewSection() // CR: Ovo pripada u SpawnManageru
     {
         GameObject environment = ObjectPool.Instance.GetEnvironment();
         if (environment != null)
