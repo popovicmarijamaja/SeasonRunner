@@ -12,20 +12,19 @@ public class ObjectPool : MonoBehaviour
     private const int ObstaclesPoolSize = 11;
     private const int NumberOfRockInLine = 2;
 
-    [SerializeField] private GameObject environment;
-    [SerializeField] private GameObject fireball;
-    [SerializeField] private GameObject bullet;
-    [SerializeField] private GameObject rock;
-    [SerializeField] private GameObject woodenObstacle;
-    [SerializeField] private GameObject mushrooms;
-    [SerializeField] private GameObject star;
-    [SerializeField] private GameObject coin;
-    [SerializeField] private GameObject magnet;
-    [SerializeField] private GameObject healthPack;
-    [SerializeField] private GameObject shield;
-    [SerializeField] private GameObject enemy;
-    [SerializeField] private GameObject gun;
-    [SerializeField] private GameObject shootingEnemy;
+    [SerializeField] private GameObject environmentPrefab;
+    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private GameObject rockPrefab;
+    [SerializeField] private GameObject woodenObstaclePrefab;
+    [SerializeField] private GameObject mushroomsPrefab;
+    [SerializeField] private GameObject starPrefab;
+    [SerializeField] private GameObject coinPrefab;
+    [SerializeField] private GameObject magnetPrefab;
+    [SerializeField] private GameObject healthPackPrefab;
+    [SerializeField] private GameObject shieldPrefab;
+    [SerializeField] private GameObject soldierPrefab;
+    [SerializeField] private GameObject gunPrefab;
 
     public List<GameObject> EnvirontmentPool = new();
     private readonly List<GameObject> fireballPool = new();
@@ -35,8 +34,7 @@ public class ObjectPool : MonoBehaviour
     private readonly List<GameObject> mushroomsPool = new();
     private readonly List<GameObject> starPool = new();
     private readonly List<GameObject> coinPool = new();
-    private readonly List<GameObject> enemyPool = new();
-    private readonly List<GameObject> shootingEnemyPool = new();
+    private readonly List<GameObject> soldierPool = new();
     private readonly List<GameObject> magnetPool = new();
     private readonly List<GameObject> healthPackPool = new();
     private readonly List<GameObject> shieldPool = new();
@@ -62,37 +60,36 @@ public class ObjectPool : MonoBehaviour
     {
         for (int i = 0; i < EnvironmentPoolSize; i++)
         {
-            InstantiateGameObject(environment, EnvirontmentPool);
+            InstantiateGameObject(environmentPrefab, EnvirontmentPool);
             for (int j = 0; j < ObstaclesPoolSize; j++)
             {
                 for (int e = 0; e < NumberOfRockInLine; e++)
                 {
-                    InstantiateGameObject(rock, rockPool);
+                    InstantiateGameObject(rockPrefab, rockPool);
                 }
-                InstantiateGameObject(woodenObstacle, woodenObstaclePool);
-                InstantiateGameObject(mushrooms, mushroomsPool);
-                InstantiateGameObject(star, starPool);
-                InstantiateGameObject(enemy, enemyPool);
-                InstantiateGameObject(shootingEnemy, shootingEnemyPool);
+                InstantiateGameObject(woodenObstaclePrefab, woodenObstaclePool);
+                InstantiateGameObject(mushroomsPrefab, mushroomsPool);
+                InstantiateGameObject(starPrefab, starPool);
+                InstantiateGameObject(soldierPrefab, soldierPool);
             }
             for (int f = 0; f < CoinPoolSize; f++)
             {
-                InstantiateGameObject(coin, coinPool);
+                InstantiateGameObject(coinPrefab, coinPool);
             }
-            InstantiateGameObject(magnet, magnetPool);
-            InstantiateGameObject(healthPack, healthPackPool);
-            InstantiateGameObject(shield, shieldPool);
-            InstantiateGameObject(gun, gunPool);
+            InstantiateGameObject(magnetPrefab, magnetPool);
+            InstantiateGameObject(healthPackPrefab, healthPackPool);
+            InstantiateGameObject(shieldPrefab, shieldPool);
+            InstantiateGameObject(gunPrefab, gunPool);
         }
 
         for (int i = 0; i < FireballPoolSize; i++)
         {
-            InstantiateGameObject(fireball, fireballPool);
+            InstantiateGameObject(fireballPrefab, fireballPool);
         }
 
         for (int i = 0; i < BulletPoolSize; i++)
         {
-            InstantiateGameObject(bullet, bulletPool);
+            InstantiateGameObject(bulletPrefab, bulletPool);
         }
 
         isInitialized = true;
@@ -201,21 +198,9 @@ public class ObjectPool : MonoBehaviour
         return null;
     }
 
-    public GameObject GetEnemy()
+    public GameObject GetSoldier()
     {
-        foreach (GameObject obj in enemyPool)
-        {
-            if (!obj.activeInHierarchy)
-            {
-                return obj;
-            }
-        }
-        return null;
-    }
-
-    public GameObject GetShootingEnemy()
-    {
-        foreach (GameObject obj in shootingEnemyPool)
+        foreach (GameObject obj in soldierPool)
         {
             if (!obj.activeInHierarchy)
             {

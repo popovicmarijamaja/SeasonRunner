@@ -5,6 +5,7 @@ public class EnemyData : ScriptableObject
 {
     public string Name;
     public float Speed;
+    public bool isShooting;
     public string AliveParameter;
-    public string FireTag;
+    public RuntimeAnimatorController AnimatorController;
 }

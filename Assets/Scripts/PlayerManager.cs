@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+
 public class PlayerManager : MonoBehaviour
 {
     public const int HealthMaxValue = 4;
@@ -95,6 +96,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
+            AudioManager.Instance.PlayJumpSound();
             CharacterAnimator.SetTrigger(JumpTriggerParameter);
             characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             isGrounded = false;
@@ -169,17 +171,17 @@ public class PlayerManager : MonoBehaviour
 
     public void ActivateShield()
     {
-        powerUpManager.ActivatingShield();
+        powerUpManager.ActivateShield();
     }
 
     public void ActivateGun()
     {
-        powerUpManager.ActivatingGun();
+        powerUpManager.ActivateGun();
     }
 
     public void ActivateMagnet()
     {
-        powerUpManager.ActivatingMagnet();
+        powerUpManager.ActivateMagnet();
     }
 
     public void DecreaseHealth()

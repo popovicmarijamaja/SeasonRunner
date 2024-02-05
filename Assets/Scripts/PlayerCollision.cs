@@ -53,13 +53,13 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(MushroomTag))
         {
-            GameManager.Instance.GetHurt();
+            GameManager.Instance.DamagePlayer();
         }
     }
 
     private void HandleEnemyCollision(Collider other)
     {
-        if (other.CompareTag(EnemyTag))
+        if (other.CompareTag(EnemyTag) && other is CapsuleCollider)
         {
             GameManager.Instance.EndGame();
         }
@@ -69,7 +69,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(BulletTag))
         {
-            GameManager.Instance.GetHurt();
+            GameManager.Instance.DamagePlayer();
         }
     }
 
@@ -95,6 +95,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateMagnet();
+            GameManager.Instance.PlayPowerUpSoundAndParticle();
         }
     }
 
@@ -122,6 +123,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateShield();
+            GameManager.Instance.PlayPowerUpSoundAndParticle();
         }
     }
 
@@ -131,6 +133,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateGun();
+            GameManager.Instance.PlayPowerUpSoundAndParticle();
         }
     }
 

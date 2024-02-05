@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject youLostMenu;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider sfxSlider;
     public Slider HealthSlider;
 
     private void Awake()
@@ -22,6 +24,32 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        SetSavedSlidersValues();
+    }
+
+    private void SetSavedSlidersValues()
+    {
+        float savedMusicVolume = PlayerPrefs.GetFloat(AudioManager.MixerMusic, 1.0f);
+        float savedSFXVolume = PlayerPrefs.GetFloat(AudioManager.MixerSFX, 1.0f);
+
+        musicSlider.value = savedMusicVolume;
+        sfxSlider.value = savedSFXVolume;
+        AudioManager.Instance.SetMusicVolume(savedMusicVolume);
+        AudioManager.Instance.SetSFXVolume(savedSFXVolume);
+    }
+
+    public void SetMusicSlider()
+    {
+        AudioManager.Instance.SetMusicVolume(musicSlider.value);
+    }
+
+    public void SetSFXSlider()
+    {
+        AudioManager.Instance.SetSFXVolume(sfxSlider.value);
     }
 
     public void PLayGame()
@@ -87,4 +115,5 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.PlayGame();
     }
+
 }

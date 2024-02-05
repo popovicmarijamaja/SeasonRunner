@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
 
     private const int PlayerHealthMin = PlayerManager.HealthMinValue;
     private const int PlayerHealthMax = PlayerManager.HealthMaxValue;
+    private const int ScoreIncrementByCoin = 10;
+    private const int ScoreIncrementByStar = 50;
+    private const float DeathAimationDuration = 2f;
     public const float SpeedIncrement = 0.03f;
     private const string GameplayScene = "Gameplay";
 
@@ -88,18 +91,24 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         SetGameState(GameState.GameOver);
-        StartCoroutine(WaitForEndOfParcticles());
-        if (playerManager.health != PlayerHealthMin)
-        {
-            playerManager.PlayExplosionParticle();
-            playerManager.health = PlayerHealthMin;
-            UIManager.Instance.UpdateHealthSlider(playerManager.health);
-        }
+        StartCoroutine(WaitForEndOfDeathAnimation());
+        if (playerManager.health == PlayerHealthMin)
+            return;
+        SetDeathByObstacleHit();
     }
 
-    private IEnumerator WaitForEndOfParcticles()
+    private void SetDeathByObstacleHit()
     {
-        yield return new WaitForSeconds(2f);
+        playerManager.PlayExplosionParticle();
+        playerManager.health = PlayerHealthMin;
+        UIManager.Instance.UpdateHealthSlider(playerManager.health);
+        AudioManager.Instance.PlayExposionSound();
+        AudioManager.Instance.PlayHurtSound();
+    }
+
+    private IEnumerator WaitForEndOfDeathAnimation()
+    {
+        yield return new WaitForSeconds(DeathAimationDuration);
         UIManager.Instance.ToggleGameOverMenu(CurrentState);
     }
 
@@ -113,17 +122,28 @@ public class GameManager : MonoBehaviour
 
     public void CollectCoin()
     {
-        PlayCollectSoundAndParticle();
-        coinScore += 10;
+        PlayCoinCollectSoundAndParticle();
+        IncreaseCoinScore(ScoreIncrementByCoin);
     }
 
     public void CollectStar()
     {
-        PlayCollectSoundAndParticle();
-        coinScore += 50;
+        PlayCoinCollectSoundAndParticle();
+        IncreaseCoinScore(ScoreIncrementByStar);
     }
 
-    private void PlayCollectSoundAndParticle()
+    private void IncreaseCoinScore(int value)
+    {
+        coinScore += value;
+    }
+
+    public void PlayPowerUpSoundAndParticle()
+    {
+        AudioManager.Instance.PlayPowerUpSound();
+        playerManager.PlayCollectionParticle();
+    }
+
+    public void PlayCoinCollectSoundAndParticle()
     {
         AudioManager.Instance.PlayCoinSound();
         playerManager.PlayCollectionParticle();
@@ -139,10 +159,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GetHurt()
+    public void DamagePlayer()
     {
         playerManager.DecreaseHealth();
         UIManager.Instance.UpdateHealthSlider(playerManager.health);
+        AudioManager.Instance.PlayHurtSound();
         if (playerManager.health == PlayerHealthMin)
         {
             EndGame();
@@ -150,7 +171,7 @@ public class GameManager : MonoBehaviour
     }
     public void CollectHeart()
     {
-        PlayCollectSoundAndParticle();
+        PlayPowerUpSoundAndParticle();
         if (playerManager.health == PlayerHealthMax)
             return;
         playerManager.IncreaseHealth();

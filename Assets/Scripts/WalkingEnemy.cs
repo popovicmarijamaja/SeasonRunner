@@ -1,10 +1,13 @@
 using UnityEngine;
 
-public class EnemyWalking : MonoBehaviour
+public class WalkingEnemy : MonoBehaviour
 {
-    public Transform PointA;
-    public Transform PointB;
+    private const string PositionA = "PositionA";
+    private const string PositionB = "PositionB";
 
+    private Transform pointA;
+    private Transform pointB;
+    private Transform parent;
     private Transform destination;
     private Animator animator;
     private EnemyController enemyController;
@@ -12,10 +15,13 @@ public class EnemyWalking : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         enemyController = GetComponent<EnemyController>();
+        parent = transform.parent;
+        pointA = parent.Find(PositionA);
+        pointB = parent.Find(PositionB);
     }
     private void Start()
     {
-        destination = PointA;
+        destination = pointA;
     }
 
     private void Update()
@@ -33,14 +39,14 @@ public class EnemyWalking : MonoBehaviour
         if (Vector3.Distance(transform.position, destination.position) < 0.01f)
         {
             // If it has reached the target, change the destination
-            destination = (destination == PointA) ? PointB : PointA;
+            destination = (destination == pointA) ? pointB : pointA;
             ChangeDestination();
         }
     }
     private void ChangeDestination()
     {
         // Determine the target rotation based on the new destination
-        Quaternion targetRotation = (destination == PointB) ? Quaternion.Euler(0f, 0f, 0f) : Quaternion.Euler(0f, 180f, 0f);
+        Quaternion targetRotation = (destination == pointB) ? Quaternion.Euler(0f, 0f, 0f) : Quaternion.Euler(0f, 180f, 0f);
         transform.rotation = targetRotation;
     }
 }

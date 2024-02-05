@@ -14,33 +14,32 @@ public class PowerUpManager : MonoBehaviour
         playerManager = GetComponent<PlayerManager>();
     }
 
-    public void ActivatingMagnet()
+    public void ActivateMagnet()
     {
         if (playerManager.isMagnetActive)
         {
             StopCoroutine(MagnetCountDown());
         }
 
-        playerManager.isMagnetActive = true;
         StartCoroutine(MagnetCountDown());
     }
 
     private IEnumerator MagnetCountDown()
     {
+        playerManager.isMagnetActive = true;
         playerManager.CollectibleCollider.enabled = true;
         yield return new WaitForSeconds(MagnetDuration);
         playerManager.CollectibleCollider.enabled = false;
         playerManager.isMagnetActive = false;
     }
 
-    public void ActivatingGun()
+    public void ActivateGun()
     {
         if (playerManager.isGunActive)
         {
             StopCoroutine(GunCountDown());
         }
 
-        playerManager.isGunActive = true;
         StartCoroutine(GunCountDown());
     }
 
@@ -51,14 +50,13 @@ public class PowerUpManager : MonoBehaviour
         playerManager.isGunActive = false;
     }
 
-    public void ActivatingShield()
+    public void ActivateShield()
     {
         if (playerManager.IsShieldActive)
         {
             StopCoroutine(ShieldCountDown());
         }
 
-        playerManager.IsShieldActive = true;
         StartCoroutine(ShieldCountDown());
     }
 

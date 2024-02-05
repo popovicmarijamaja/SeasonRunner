@@ -38278,6 +38278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42353c5cea794fe44afaf17545af115e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shootingEnemy: {fileID: 11400000, guid: 1e5b9e76ecb8497419ba78fd7c2cf51a, type: 2}
+  walkingEnemy: {fileID: 11400000, guid: 27c2aea7ca3d3b447a65e7288fa4f0c8, type: 2}
 --- !u!1 &4114513575814564959
 GameObject:
   m_ObjectHideFlags: 0

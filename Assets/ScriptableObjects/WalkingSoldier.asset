@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 084d54769c1c801448dd39d076051e9f, type: 3}
-  m_Name: ShootingEnemy
+  m_Name: WalkingSoldier
   m_EditorClassIdentifier: 
-  Name: Shooting Enemy
-  Speed: 0
+  Name: Walking Soldier
+  Speed: 2
+  isShooting: 0
   AliveParameter: alive
-  FireTag: fire
+  AnimatorController: {fileID: 9100000, guid: 75d3a58b3d7879f41926561701407a48, type: 2}

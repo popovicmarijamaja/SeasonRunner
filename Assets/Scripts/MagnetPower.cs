@@ -3,6 +3,7 @@ using UnityEngine;
 public class MagnetPower : MonoBehaviour
 {
     private const float CoinSpeed = 20f;
+    private const float CoinDefaultYPos = 0.5f;
     private const string PlayerRootTag = "PlayerRoot";
     private const string PlayerTag = "Player";
 
@@ -34,5 +35,14 @@ public class MagnetPower : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-    
+
+    private void SetToDefault()
+    {
+        transform.position = new Vector3(transform.position.x, CoinDefaultYPos, transform.position.z);
+    }
+
+    private void OnDisable()
+    {
+        SetToDefault();
+    }
 }

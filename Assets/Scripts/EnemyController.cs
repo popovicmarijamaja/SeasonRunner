@@ -4,26 +4,81 @@ public class EnemyController : MonoBehaviour
 {
     public EnemyData enemyData;
 
+    private const string FireTag = "fire";
+
     private Animator animator;
-    private BoxCollider boxCollider;
+    private CapsuleCollider capsuleCollider;
+    private BoxCollider detector;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+        detector = GetComponent<BoxCollider>();
+    }
+
+    public void SetEnemy()
+    {
+        AddBehaviourScripts();
+        SetComponentsToDefault();
+    }
+
+    private void AddBehaviourScripts()
+    {
+        if (enemyData.Speed > 0)
+        {
+            if (GetComponent<WalkingEnemy>() == null)
+            {
+                gameObject.AddComponent<WalkingEnemy>();
+            }
+        }
+
+        if (enemyData.isShooting)
+        {
+            if (GetComponent<ShootingEnemy>() == null)
+            {
+                gameObject.AddComponent<ShootingEnemy>();
+            }
+        }
+    }
+
+    private void SetComponentsToDefault()
+    {
+        animator.runtimeAnimatorController = enemyData.AnimatorController;
+        animator.SetBool(enemyData.AliveParameter, true);
+        capsuleCollider.enabled = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(enemyData.FireTag))
+        if (other.CompareTag(FireTag))
         {
             animator.SetBool(enemyData.AliveParameter, false);
             other.gameObject.SetActive(false);
-            boxCollider.enabled = false;
+            capsuleCollider.enabled = false;
+            detector.enabled = false;
+            if(GetComponent<ShootingEnemy>() != null)
+            {
+                GetComponent<ShootingEnemy>().CancelInvoke();
+            }
         }
     }
-    private void OnEnable()
+
+    private void DestroyBehaviourScripts()
     {
-        animator.SetBool(enemyData.AliveParameter, true);
-        boxCollider.enabled = true;
+        var walkingSoldierScript = GetComponent<WalkingEnemy>();
+        var shootingSoldierScript = GetComponent<ShootingEnemy>();
+
+        if (walkingSoldierScript != null)
+            Destroy(walkingSoldierScript);
+
+        if (shootingSoldierScript != null)
+            Destroy(shootingSoldierScript);
     }
+
+    private void OnDisable()
+    {
+        DestroyBehaviourScripts();
+    }
+
 }
