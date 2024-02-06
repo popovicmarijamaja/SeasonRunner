@@ -3,32 +3,65 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    public static SpawnManager Instance { get; private set; }
+
     private const int NumberOfCoinsPerChunk = 11;
     private const int NumberOfObstaclesPerChunk = 11;
     private const float DistanceBetweenObstacles = -7.7f;
     private const float DistanceBetweenCoins = -7.7f;
-    private const float FirstDistanceObstacle = -51.5f;
-    private const float FirstDistanceCoin = -47.8f;
+    private const float FirstDistanceObstacle = -28.5f;
+    private const float FirstDistanceCoin = -24.8f;
+    private const float LeftLane = -1f;
+    private const float CentreLane = 0f;
+    private const float RightLane = 1f;
 
+    private float randomPosZ;
+    private float posX;
+
+    [SerializeField] private Transform environmentSpawnPos;
     [SerializeField] private EnemyData shootingEnemy;
     [SerializeField] private EnemyData walkingEnemy;
+    private Transform parentEnvironment;
 
     private readonly List<GameObject> ObjectsInEnvironment = new();
+    private readonly float[] posForZ = { LeftLane, CentreLane, RightLane };
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void SpawnNewSection()
+    {
+        GameObject environment = ObjectPool.Instance.GetEnvironment();
+        if (environment == null)
+            return;
+        SetEnvironment(environment);
+        SpawnObstacle();
+        SpawnCoins();
+        SpawnPowerUp();
+    }
+
+    private void SetEnvironment(GameObject environment)
+    {
+        environment.transform.position = environmentSpawnPos.position;
+        environment.SetActive(true);
+        parentEnvironment = environment.transform;
+    }
 
     private void SpawnObstacle()
     {
-        float posX;
-        float randomPosZ;
-        int randomIndex;
-        float[] posForZ = { -0.5f, 0.5f, 1.6f };
-        float neutralPosZ = posForZ[1];
-
-
         for (int i = 0; i < NumberOfObstaclesPerChunk; i++)
         {
-            posX = FirstDistanceObstacle + (i * DistanceBetweenObstacles);
-            randomIndex = Random.Range(0, 3);
-            randomPosZ = posForZ[randomIndex];
+            GeneratePosX(i, FirstDistanceObstacle, DistanceBetweenObstacles);
+            GenerateRandomPosZ();
 
             switch (ChanceManager.Instance.ChooseObstacleType())
             {
@@ -39,19 +72,19 @@ public class SpawnManager : MonoBehaviour
                     SpawnTwoRocks(posX, randomPosZ, posForZ);
                     break;
                 case ObstacleType.WoodenObstacleWithStar:
-                    SpawnWoodenObstacleWithStar(posX, neutralPosZ);
+                    SpawnWoodenObstacleWithStar(posX, CentreLane);
                     break;
                 case ObstacleType.WoodenObstacleWithMushrooms:
-                    SpawnWoodenObstacleWithMushrooms(posX, neutralPosZ);
+                    SpawnWoodenObstacleWithMushrooms(posX, CentreLane);
                     break;
                 case ObstacleType.WoodenObstacle:
-                    SpawnWoodenObstacle(posX, neutralPosZ);
+                    SpawnWoodenObstacle(posX, CentreLane);
                     break;
                 case ObstacleType.Mushrooms:
                     SpawnMushrooms(posX, randomPosZ);
                     break;
                 case ObstacleType.WalkingSoldier:
-                    SpawnWalkingSoldier(posX, neutralPosZ);
+                    SpawnWalkingSoldier(posX, CentreLane);
                     break;
                 case ObstacleType.ShootingSoldier:
                     SpawnShootingSoldier(posX, randomPosZ);
@@ -115,55 +148,62 @@ public class SpawnManager : MonoBehaviour
         walkingSoldier.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
-    private void SpawnShootingSoldier(float posX, float randomPosZ)
+    private void SpawnShootingSoldier(float posX, float posZ)
     {
         GameObject shootingSoldier = ObjectPool.Instance.GetSoldier();
-        SpawnObject(shootingSoldier, posX, randomPosZ);
+        SpawnObject(shootingSoldier, posX, posZ);
         shootingSoldier.GetComponentInChildren<EnemyController>().InnateEnemy(shootingEnemy);
         shootingSoldier.transform.rotation = Quaternion.Euler(0, 90, 0);
     }
 
     private void SpawnCoins()
     {
-        float randomPosZ;
-        float posX;
-        int randomIndex;
-        float[] posForZ = { -1f, 0f, 1f };
-
         for (int i = 0; i < NumberOfCoinsPerChunk; i++)
         {
-            randomIndex = Random.Range(0, 3);
-            randomPosZ = posForZ[randomIndex];
-            posX = FirstDistanceCoin + (i * DistanceBetweenCoins);
-
+            GenerateRandomPosZ();
+            GeneratePosX(i, FirstDistanceCoin, DistanceBetweenCoins);
             SpawnObject(ObjectPool.Instance.GetCoin(), posX, randomPosZ);
         }
     }
 
+    private void GeneratePosX(int i, float firstDistance, float distanceBetweenObjects)
+    {
+        posX = firstDistance + (i * distanceBetweenObjects);
+    }
+
     private void SpawnPowerUp()
     {
-        float[] posForZ = { -1.2f, 0f, 1.2f };
-        float[] posForX = { -49f, -57f };
-        int randomIndexZ = Random.Range(0, 3);
-        int randomIndexX = Random.Range(0, 2);
-        float randomPosZ = posForZ[randomIndexZ];
-        float randomPosX = posForX[randomIndexX];
+        ChooseFromTwoPosX(-26f, -34f);
+        GenerateRandomPosZ();
 
         switch (ChanceManager.Instance.ChoosePowerUp())
         {
             case PowerUpType.Magnet:
-                SpawnObject(ObjectPool.Instance.GetMagnet(), randomPosX, randomPosZ);
+                SpawnObject(ObjectPool.Instance.GetMagnet(), posX, randomPosZ);
                 break;
             case PowerUpType.HealthPack:
-                SpawnObject(ObjectPool.Instance.GetHealthPack(), randomPosX, randomPosZ);
+                SpawnObject(ObjectPool.Instance.GetHealthPack(), posX, randomPosZ);
                 break;
             case PowerUpType.Shield:
-                SpawnObject(ObjectPool.Instance.GetShield(), randomPosX, randomPosZ);
+                SpawnObject(ObjectPool.Instance.GetShield(), posX, randomPosZ);
                 break;
             case PowerUpType.Gun:
-                SpawnObject(ObjectPool.Instance.GetGun(), randomPosX, randomPosZ);
+                SpawnObject(ObjectPool.Instance.GetGun(), posX, randomPosZ);
                 break;
         }
+    }
+
+    private void ChooseFromTwoPosX(float firstPos, float secondPos)
+    {
+        float[] posForX = { firstPos, secondPos };
+        int randomIndexX = Random.Range(0, 2);
+        posX = posForX[randomIndexX];
+    }
+
+    private void GenerateRandomPosZ()
+    {
+        int randomIndexZ = Random.Range(0, 3);
+        randomPosZ = posForZ[randomIndexZ];
     }
 
     private void SpawnObject(GameObject obj, float posX, float posZ)
@@ -172,35 +212,31 @@ public class SpawnManager : MonoBehaviour
             return;
         
         obj.SetActive(true);
-        obj.transform.parent = transform.parent;
+        obj.transform.parent = parentEnvironment;
         obj.transform.SetPositionAndRotation(new Vector3(posX, obj.transform.position.y, posZ), obj.transform.rotation);
         ObjectsInEnvironment.Add(obj);
     }
 
-    private void ReturnObjectsInEnvironmentToPool()
+    public void ReturnObjectsInEnvironmentToPool(GameObject environment)
     {
         if (ObjectsInEnvironment == null)
             return;
-        for (int i = 0; i < ObjectsInEnvironment.Count; i++)
+        for (int i = ObjectsInEnvironment.Count - 1; i >= 0; i--)
         {
             GameObject obj = ObjectsInEnvironment[i];
-            ObjectPool.Instance.ReturnToPool(obj);
+
+            if (obj.transform.parent == environment.transform)
+            {
+                ObjectPool.Instance.ReturnToPool(obj);
+                RemoveGameObjectFromList(ObjectsInEnvironment, obj);
+            }
         }
     }
 
-    private void ClearListOfGameObjects(List<GameObject> list)
+    private void RemoveGameObjectFromList(List<GameObject> list, GameObject obj)
     {
-        list.Clear();
+        if (list.Contains(obj))
+            list.Remove(obj);
     }
 
-    private void OnEnable()
-    {
-        if (!ObjectPool.Instance.isInitialized)
-            return;
-        ReturnObjectsInEnvironmentToPool();
-        ClearListOfGameObjects(ObjectsInEnvironment);
-        SpawnObstacle();
-        SpawnCoins();
-        SpawnPowerUp();
-    }
 }

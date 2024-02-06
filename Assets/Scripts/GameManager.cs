@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     private const string GameplayScene = "Gameplay";
 
     [SerializeField] private GameObject emptyEnvironment;
-    [SerializeField] private Transform environmentSpawnPos;
     [SerializeField] private PlayerManager playerManager;
 
     private int coinScore;
@@ -52,7 +51,7 @@ public class GameManager : MonoBehaviour
     private void SetGameState(GameState state)
     {
         CurrentState = state;
-        playerManager.SetPlayerAnimation(CurrentState);
+        playerManager.SetPlayerState(CurrentState);
         SetEnvironmentMovement();
         if (state == GameState.Playing)
             playerManager.enabled = true;
@@ -147,16 +146,6 @@ public class GameManager : MonoBehaviour
     {
         AudioManager.Instance.PlayCoinSound();
         playerManager.PlayCollectionParticle();
-    }
-
-    public void SpawnNewSection() // CR: Ovo pripada u SpawnManageru
-    {
-        GameObject environment = ObjectPool.Instance.GetEnvironment();
-        if (environment != null)
-        {
-            environment.transform.position = environmentSpawnPos.position;
-            environment.SetActive(true);
-        }
     }
 
     public void DamagePlayer()

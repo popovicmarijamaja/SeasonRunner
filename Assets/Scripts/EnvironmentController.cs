@@ -15,4 +15,5 @@ public class EnvironmentController : MonoBehaviour
         transform.position += Time.deltaTime * Speed * Vector3.right;
         Speed += GameManager.SpeedIncrement * Time.deltaTime;
     }
+
 }

@@ -85,7 +85,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(NewSectionTag))
         {
-            GameManager.Instance.SpawnNewSection();
+            SpawnManager.Instance.SpawnNewSection();
         }
     }
 

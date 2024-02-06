@@ -3796,7 +3796,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emptyEnvironment: {fileID: 5113953}
-  environmentSpawnPos: {fileID: 2038350245}
   playerManager: {fileID: 1993283667}
   totalScore: 0
 --- !u!4 &158068402
@@ -20582,6 +20581,53 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815299190}
   m_Mesh: {fileID: 4313033963400421524, guid: 6c7eaede4efc960409fb9ef2dfb77f29, type: 3}
+--- !u!1 &819177717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 819177718}
+  - component: {fileID: 819177719}
+  m_Layer: 0
+  m_Name: SpawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &819177718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819177717}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 898235093}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &819177719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819177717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42353c5cea794fe44afaf17545af115e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  environmentSpawnPos: {fileID: 2038350245}
+  shootingEnemy: {fileID: 11400000, guid: 1e5b9e76ecb8497419ba78fd7c2cf51a, type: 2}
+  walkingEnemy: {fileID: 11400000, guid: 27c2aea7ca3d3b447a65e7288fa4f0c8, type: 2}
 --- !u!1 &819196011
 GameObject:
   m_ObjectHideFlags: 0
@@ -21848,6 +21894,7 @@ Transform:
   - {fileID: 1096709364}
   - {fileID: 1294698042}
   - {fileID: 450527429}
+  - {fileID: 819177718}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -31235,7 +31282,7 @@ MonoBehaviour:
     type: 3}
   bulletPrefab: {fileID: 1946528075328561982, guid: 766d20c9182f7e14691f92cdee954828,
     type: 3}
-  rockPrefab: {fileID: 9075382009730815078, guid: 8dc305f018716a644b81208da0bd56d5,
+  rockPrefab: {fileID: 805476493436869004, guid: 37187f4c6924e684e8f8df75316628d7,
     type: 3}
   woodenObstaclePrefab: {fileID: 7997515473177360302, guid: 97a10892c5334ab4ea22d400a8401cc1,
     type: 3}
@@ -31256,7 +31303,6 @@ MonoBehaviour:
   gunPrefab: {fileID: 8866106083991393466, guid: 487b611decb0058488e977d014154298,
     type: 3}
   EnvirontmentPool: []
-  isInitialized: 0
 --- !u!4 &1294698042
 Transform:
   m_ObjectHideFlags: 0

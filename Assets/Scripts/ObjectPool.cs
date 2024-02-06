@@ -40,8 +40,6 @@ public class ObjectPool : MonoBehaviour
     private readonly List<GameObject> shieldPool = new();
     private readonly List<GameObject> gunPool = new();
 
-    public bool isInitialized;
-
     private void Awake()
     {
         if (Instance == null)
@@ -52,7 +50,6 @@ public class ObjectPool : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         InitializePool();
     }
 
@@ -91,8 +88,6 @@ public class ObjectPool : MonoBehaviour
         {
             InstantiateGameObject(bulletPrefab, bulletPool);
         }
-
-        isInitialized = true;
     }
 
     private void InstantiateGameObject(GameObject prefab, List<GameObject> list)

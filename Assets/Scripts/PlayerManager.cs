@@ -153,7 +153,7 @@ public class PlayerManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void SetPlayerAnimation(GameState currentState)
+    public void SetPlayerState(GameState currentState)
     {
         switch (currentState)
         {
@@ -162,6 +162,8 @@ public class PlayerManager : MonoBehaviour
                 break;
             case GameState.GameOver:
                 CharacterAnimator.SetBool(DeathAnimBool, true);
+                character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.y);
+                characterRb.constraints = RigidbodyConstraints.FreezeAll;
                 break;
             default:
                 CharacterAnimator.enabled = false;
