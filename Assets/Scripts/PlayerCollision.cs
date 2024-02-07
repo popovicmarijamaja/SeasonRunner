@@ -70,6 +70,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag(BulletTag))
         {
             GameManager.Instance.DamagePlayer();
+            other.gameObject.SetActive(false);
         }
     }
 
@@ -146,12 +147,12 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-    private void StartRoll()
+    public void StartRoll()
     {
         playerManager.RollDown();
     }
 
-    private void EndRoll()
+    public void EndRoll()
     {
         playerManager.RollUp();
     }

@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject youLostMenu;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject audioMenu;
+    [SerializeField] private GameObject commandsMenu;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
     public Slider HealthSlider;
@@ -116,4 +118,23 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.PlayGame();
     }
 
+    public void ToggleAudioMenu()
+    {
+        if(audioMenu.activeSelf)
+            audioMenu.SetActive(false);
+        else
+            audioMenu.SetActive(true);
+    }
+    public void ToggleCommandsMenu()
+    {
+        if (commandsMenu.activeSelf)
+            commandsMenu.SetActive(false);
+        else
+            commandsMenu.SetActive(true);
+    }
+
+    public void PlayAgain()
+    {
+        GameManager.Instance.PlayAgain();
+    }
 }

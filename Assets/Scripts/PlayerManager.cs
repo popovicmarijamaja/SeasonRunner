@@ -162,7 +162,7 @@ public class PlayerManager : MonoBehaviour
                 break;
             case GameState.GameOver:
                 CharacterAnimator.SetBool(DeathAnimBool, true);
-                character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.y);
+                character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.z);
                 characterRb.constraints = RigidbodyConstraints.FreezeAll;
                 break;
             default:

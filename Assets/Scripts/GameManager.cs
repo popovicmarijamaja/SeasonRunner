@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    private static bool isPlayAgain;
+
     private const int PlayerHealthMin = PlayerManager.HealthMinValue;
     private const int PlayerHealthMax = PlayerManager.HealthMaxValue;
     private const int ScoreIncrementByCoin = 10;
@@ -40,7 +42,20 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        ShowMainMenu();
+        if (isPlayAgain)
+        {
+            PlayGame();
+            SetIsPlayAgainBool(false);
+        }
+        else
+        {
+            ShowMainMenu();
+        }
+    }
+
+    private void SetIsPlayAgainBool(bool value)
+    {
+        isPlayAgain = value;
     }
 
     private void ShowMainMenu()
@@ -177,6 +192,13 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void PlayAgain()
+    {
+        SetIsPlayAgainBool(true);
+        LoadGameplayScene();
+    }
+
 }
 public enum GameState
 {

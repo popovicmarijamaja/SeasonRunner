@@ -9,8 +9,8 @@ public class SpawnManager : MonoBehaviour
     private const int NumberOfObstaclesPerChunk = 11;
     private const float DistanceBetweenObstacles = -7.7f;
     private const float DistanceBetweenCoins = -7.7f;
-    private const float FirstDistanceObstacle = -28.5f;
-    private const float FirstDistanceCoin = -24.8f;
+    private const float FirstDistanceObstacle = -32.5f;
+    private const float FirstDistanceCoin = -28.8f;
     private const float LeftLane = -1f;
     private const float CentreLane = 0f;
     private const float RightLane = 1f;
@@ -173,7 +173,7 @@ public class SpawnManager : MonoBehaviour
 
     private void SpawnPowerUp()
     {
-        ChooseFromTwoPosX(-26f, -34f);
+        ChooseFromTwoPosX(-30f, -38f);
         GenerateRandomPosZ();
 
         switch (ChanceManager.Instance.ChoosePowerUp())
