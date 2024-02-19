@@ -10,10 +10,6 @@ public class MagnetPower : MonoBehaviour
     private GameObject player;
     private bool isAttracted;
 
-    private void Awake()
-    {
-        player = GameObject.FindGameObjectWithTag(PlayerTag);
-    }
 
     private void Update()
     {
@@ -28,6 +24,8 @@ public class MagnetPower : MonoBehaviour
         if (other.CompareTag(PlayerRootTag))
         {
             isAttracted = true;
+            //player = other.gameObject;
+            player = GameObject.FindGameObjectWithTag(PlayerTag);
         }
         if (other.CompareTag(PlayerTag))
         {

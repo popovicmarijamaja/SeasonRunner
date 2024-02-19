@@ -16,6 +16,8 @@ public class PlayerCollision : MonoBehaviour
     private const string BulletTag = "bullet";
 
     private PlayerManager playerManager;
+    [SerializeField] private Transform environmentSpawnPos;
+    [SerializeField] private SpawnManager spawnManager;
 
     private void Awake()
     {
@@ -45,7 +47,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(ObstacleTag))
         {
-            GameManager.Instance.EndGame();
+            GameManager.Instance.EndGame(playerManager);
         }
     }
 
@@ -53,7 +55,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(MushroomTag))
         {
-            GameManager.Instance.DamagePlayer();
+            GameManager.Instance.DamagePlayer(playerManager);
         }
     }
 
@@ -61,7 +63,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(EnemyTag) && other is CapsuleCollider)
         {
-            GameManager.Instance.EndGame();
+            GameManager.Instance.EndGame(playerManager);
         }
     }
 
@@ -69,7 +71,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(BulletTag))
         {
-            GameManager.Instance.DamagePlayer();
+            GameManager.Instance.DamagePlayer(playerManager);
             other.gameObject.SetActive(false);
         }
     }
@@ -78,7 +80,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(CoinTag))
         {
-            GameManager.Instance.CollectCoin();
+            GameManager.Instance.CollectCoin(playerManager);
         }
     }
 
@@ -86,7 +88,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(NewSectionTag))
         {
-            SpawnManager.Instance.SpawnNewSection();
+            spawnManager.SpawnNewSection(environmentSpawnPos);
         }
     }
 
@@ -96,7 +98,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateMagnet();
-            GameManager.Instance.PlayPowerUpSoundAndParticle();
+            GameManager.Instance.PlayPowerUpSoundAndParticle(playerManager);
         }
     }
 
@@ -105,7 +107,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag(StarTag))
         {
             other.gameObject.SetActive(false);
-            GameManager.Instance.CollectStar();
+            GameManager.Instance.CollectStar(playerManager);
         }
     }
 
@@ -114,7 +116,7 @@ public class PlayerCollision : MonoBehaviour
         if (other.CompareTag(HealthPackTag))
         {
             other.gameObject.SetActive(false);
-            GameManager.Instance.CollectHeart();
+            GameManager.Instance.CollectHeart(playerManager);
         }
     }
 
@@ -124,7 +126,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateShield();
-            GameManager.Instance.PlayPowerUpSoundAndParticle();
+            GameManager.Instance.PlayPowerUpSoundAndParticle(playerManager);
         }
     }
 
@@ -134,7 +136,7 @@ public class PlayerCollision : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             playerManager.ActivateGun();
-            GameManager.Instance.PlayPowerUpSoundAndParticle();
+            GameManager.Instance.PlayPowerUpSoundAndParticle(playerManager);
         }
     }
 

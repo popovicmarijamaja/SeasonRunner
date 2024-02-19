@@ -7,24 +7,18 @@ public class PowerUpManager : MonoBehaviour
     private const float ShieldDuration = 5f;
     private const float MagnetDuration = 6f;
 
-    private PlayerManager playerManager;
 
-    private void Awake()
-    {
-        playerManager = GetComponent<PlayerManager>();
-    }
-
-    public void ActivateMagnet()
+    public void ActivateMagnet(PlayerManager playerManager)
     {
         if (playerManager.isMagnetActive)
         {
-            StopCoroutine(MagnetCountDown());
+            StopCoroutine(MagnetCountDown(playerManager));
         }
 
-        StartCoroutine(MagnetCountDown());
+        StartCoroutine(MagnetCountDown(playerManager));
     }
 
-    private IEnumerator MagnetCountDown()
+    private IEnumerator MagnetCountDown(PlayerManager playerManager)
     {
         playerManager.isMagnetActive = true;
         playerManager.CollectibleCollider.enabled = true;
@@ -33,34 +27,34 @@ public class PowerUpManager : MonoBehaviour
         playerManager.isMagnetActive = false;
     }
 
-    public void ActivateGun()
+    public void ActivateGun(PlayerManager playerManager)
     {
         if (playerManager.isGunActive)
         {
-            StopCoroutine(GunCountDown());
+            StopCoroutine(GunCountDown(playerManager));
         }
 
-        StartCoroutine(GunCountDown());
+        StartCoroutine(GunCountDown(playerManager));
     }
 
-    private IEnumerator GunCountDown()
+    private IEnumerator GunCountDown(PlayerManager playerManager)
     {
         playerManager.isGunActive = true;
         yield return new WaitForSeconds(GunDuration);
         playerManager.isGunActive = false;
     }
 
-    public void ActivateShield()
+    public void ActivateShield(PlayerManager playerManager)
     {
         if (playerManager.IsShieldActive)
         {
-            StopCoroutine(ShieldCountDown());
+            StopCoroutine(ShieldCountDown(playerManager));
         }
 
-        StartCoroutine(ShieldCountDown());
+        StartCoroutine(ShieldCountDown(playerManager));
     }
 
-    private IEnumerator ShieldCountDown()
+    private IEnumerator ShieldCountDown(PlayerManager playerManager)
     {
         playerManager.IsShieldActive = true;
         yield return new WaitForSeconds(ShieldDuration);

@@ -3,14 +3,13 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public static SpawnManager Instance { get; private set; }
 
     private const int NumberOfCoinsPerChunk = 11;
     private const int NumberOfObstaclesPerChunk = 11;
     private const float DistanceBetweenObstacles = -7.7f;
     private const float DistanceBetweenCoins = -7.7f;
-    private const float FirstDistanceObstacle = -32.5f;
-    private const float FirstDistanceCoin = -28.8f;
+    private const float FirstDistanceObstacle = 38.5f;
+    private const float FirstDistanceCoin = 42.5f;
     private const float LeftLane = -1f;
     private const float CentreLane = 0f;
     private const float RightLane = 1f;
@@ -18,7 +17,6 @@ public class SpawnManager : MonoBehaviour
     private float randomPosZ;
     private float posX;
 
-    [SerializeField] private Transform environmentSpawnPos;
     [SerializeField] private EnemyData shootingEnemy;
     [SerializeField] private EnemyData walkingEnemy;
     private Transform parentEnvironment;
@@ -26,33 +24,23 @@ public class SpawnManager : MonoBehaviour
     private readonly List<GameObject> ObjectsInEnvironment = new();
     private readonly float[] posForZ = { LeftLane, CentreLane, RightLane };
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
-    public void SpawnNewSection()
+    public void SpawnNewSection(Transform spawnPosition)
     {
         GameObject environment = ObjectPool.Instance.GetEnvironment();
         if (environment == null)
             return;
-        SetEnvironment(environment);
+        SetEnvironment(environment, spawnPosition);
         SpawnObstacle();
         SpawnCoins();
         SpawnPowerUp();
     }
 
-    private void SetEnvironment(GameObject environment)
+    private void SetEnvironment(GameObject environment, Transform spawnPosition)
     {
-        environment.transform.position = environmentSpawnPos.position;
+        environment.transform.position = spawnPosition.position;
         environment.SetActive(true);
+        environment.transform.parent = transform.parent;
         parentEnvironment = environment.transform;
     }
 
@@ -173,7 +161,7 @@ public class SpawnManager : MonoBehaviour
 
     private void SpawnPowerUp()
     {
-        ChooseFromTwoPosX(-30f, -38f);
+        ChooseFromTwoPosX(40f, 32f);
         GenerateRandomPosZ();
 
         switch (ChanceManager.Instance.ChoosePowerUp())
@@ -213,7 +201,7 @@ public class SpawnManager : MonoBehaviour
         
         obj.SetActive(true);
         obj.transform.parent = parentEnvironment;
-        obj.transform.SetPositionAndRotation(new Vector3(posX, obj.transform.position.y, posZ), obj.transform.rotation);
+        obj.transform.localPosition = new Vector3(posX, obj.transform.position.y, posZ);
         ObjectsInEnvironment.Add(obj);
     }
 
@@ -224,7 +212,6 @@ public class SpawnManager : MonoBehaviour
         for (int i = ObjectsInEnvironment.Count - 1; i >= 0; i--)
         {
             GameObject obj = ObjectsInEnvironment[i];
-
             if (obj.transform.parent == environment.transform)
             {
                 ObjectPool.Instance.ReturnToPool(obj);

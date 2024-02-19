@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,13 +16,9 @@ public class GameManager : MonoBehaviour
     public const float SpeedIncrement = 0.03f;
     private const string GameplayScene = "Gameplay";
 
-    [SerializeField] private GameObject emptyEnvironment;
-    [SerializeField] private PlayerManager playerManager;
-
-    private int coinScore;
-    private float runningScore;
-    public int totalScore;
-    private float scoreIncrementPerSecond = 2f;
+    [SerializeField] private GameObject stage2;
+    
+    public int NumberOfPlayers;
     
 
     public GameState CurrentState { get; private set; }
@@ -53,36 +48,59 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetIsPlayAgainBool(bool value)
-    {
-        isPlayAgain = value;
-    }
-
     private void ShowMainMenu()
     {
         SetGameState(GameState.MainMenu);
     }
 
-    private void SetGameState(GameState state)
+    public void GetNumberOfPlayers(int number)
     {
-        CurrentState = state;
-        playerManager.SetPlayerState(CurrentState);
-        SetEnvironmentMovement();
-        if (state == GameState.Playing)
-            playerManager.enabled = true;
-        else
-            playerManager.enabled = false;
+        NumberOfPlayers = number;
     }
 
-    private void Update()
+    public void SetNumberOfPlayers()
     {
-        totalScore = Convert.ToInt32(coinScore + runningScore);
-        if (CurrentState == GameState.Playing)
+        CheckIfMultiplayer();
+        CameraManager.Instance.SetCamera(NumberOfPlayers);
+        PlayGame();
+    }
+
+    private void CheckIfMultiplayer()
+    {
+        if (NumberOfPlayers == 2)
+            stage2.SetActive(true);
+    }
+
+    private void SetIsPlayAgainBool(bool value)
+    {
+        isPlayAgain = value;
+    }
+
+
+    private void SetGameState(GameState state)
+    {
+        SetCurrentState(state);
+        SetStateForEachPlayer(state);
+    }
+
+    private void SetCurrentState(GameState state)
+    {
+        CurrentState = state;
+    }
+
+    private void SetStateForEachPlayer(GameState state)
+    {
+        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+
+        foreach (PlayerManager player in players)
         {
-            runningScore += Time.deltaTime * scoreIncrementPerSecond;
+            player.SetPlayerState(CurrentState);
+            if (state == GameState.Playing)
+                player.enabled = true;
+            else
+                player.enabled = false;
+            SetEnvironmentMovement(player);
         }
-        scoreIncrementPerSecond += SpeedIncrement * Time.deltaTime;
-        UIManager.Instance.UpdateScoreText(totalScore);
     }
 
     public void PlayGame()
@@ -102,20 +120,38 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.TogglePauseMenu(CurrentState);
     }
 
-    public void EndGame()
+    public void EndGame(PlayerManager playerManager)
     {
-        SetGameState(GameState.GameOver);
+        playerManager.SetPlayerState(GameState.GameOver);
+        CheckIfAllPlayersAreDead();
         StartCoroutine(WaitForEndOfDeathAnimation());
-        if (playerManager.health == PlayerHealthMin)
+        if (playerManager.Health == PlayerHealthMin)
             return;
-        SetDeathByObstacleHit();
+        SetDeathByObstacleHit(playerManager);
+        SetEnvironmentMovement(playerManager);
     }
 
-    private void SetDeathByObstacleHit()
+
+    private void CheckIfAllPlayersAreDead()
+    {
+        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+
+        // Check if any player is alive
+        foreach (PlayerManager player in players)
+        {
+            if (!player.isDead)
+            {
+                return;
+            }
+        }
+        SetGameState(GameState.GameOver);
+    }
+
+    private void SetDeathByObstacleHit(PlayerManager playerManager)
     {
         playerManager.PlayExplosionParticle();
-        playerManager.health = PlayerHealthMin;
-        UIManager.Instance.UpdateHealthSlider(playerManager.health);
+        playerManager.Health = PlayerHealthMin;
+        UIManager.Instance.UpdateHealthSlider(playerManager.Health, playerManager.HealthSlider);
         AudioManager.Instance.PlayExposionSound();
         AudioManager.Instance.PlayHurtSound();
     }
@@ -126,60 +162,69 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ToggleGameOverMenu(CurrentState);
     }
 
-    private void SetEnvironmentMovement()
+    private void SetEnvironmentMovement(PlayerManager playerManager)
     {
-        bool isPlaying = CurrentState == GameState.Playing;
-        emptyEnvironment.GetComponent<EnvironmentController>().enabled = isPlaying;
+        bool isPlaying;
+        Transform playerParent = playerManager.gameObject.transform.parent;
+
+        if (playerManager.isDead)
+            isPlaying = false;
+        else
+            isPlaying = CurrentState == GameState.Playing;
+
+        playerParent.GetComponentInChildren<EnvironmentController>().enabled = isPlaying;
+
         foreach (var pooledObject in ObjectPool.Instance.EnvirontmentPool)
-            pooledObject.GetComponent<EnvironmentController>().enabled = isPlaying;
+            if (playerParent == pooledObject.transform.parent)
+                pooledObject.GetComponent<EnvironmentController>().enabled = isPlaying;
     }
 
-    public void CollectCoin()
+    public void CollectCoin(PlayerManager playerManager)
     {
-        PlayCoinCollectSoundAndParticle();
-        IncreaseCoinScore(ScoreIncrementByCoin);
+        PlayCoinCollectSoundAndParticle(playerManager);
+        IncreaseCoinScore(ScoreIncrementByCoin, playerManager);
     }
 
-    public void CollectStar()
+    public void CollectStar(PlayerManager playerManager)
     {
-        PlayCoinCollectSoundAndParticle();
-        IncreaseCoinScore(ScoreIncrementByStar);
+        PlayCoinCollectSoundAndParticle(playerManager);
+        IncreaseCoinScore(ScoreIncrementByStar, playerManager);
     }
 
-    private void IncreaseCoinScore(int value)
+    private void IncreaseCoinScore(int value, PlayerManager playerManager)
     {
-        coinScore += value;
+        playerManager.coinScore += value;
     }
 
-    public void PlayPowerUpSoundAndParticle()
+    public void PlayPowerUpSoundAndParticle(PlayerManager playerManager)
     {
         AudioManager.Instance.PlayPowerUpSound();
         playerManager.PlayCollectionParticle();
     }
 
-    public void PlayCoinCollectSoundAndParticle()
+    public void PlayCoinCollectSoundAndParticle(PlayerManager playerManager)
     {
         AudioManager.Instance.PlayCoinSound();
         playerManager.PlayCollectionParticle();
     }
 
-    public void DamagePlayer()
+    public void DamagePlayer(PlayerManager playerManager)
     {
         playerManager.DecreaseHealth();
-        UIManager.Instance.UpdateHealthSlider(playerManager.health);
+        UIManager.Instance.UpdateHealthSlider(playerManager.Health, playerManager.HealthSlider);
         AudioManager.Instance.PlayHurtSound();
-        if (playerManager.health == PlayerHealthMin)
+        if (playerManager.Health == PlayerHealthMin)
         {
-            EndGame();
+            EndGame(playerManager);
         }
     }
-    public void CollectHeart()
+    public void CollectHeart(PlayerManager playerManager)
     {
-        PlayPowerUpSoundAndParticle();
-        if (playerManager.health == PlayerHealthMax)
+        PlayPowerUpSoundAndParticle(playerManager);
+        if (playerManager.Health == PlayerHealthMax)
             return;
         playerManager.IncreaseHealth();
-        UIManager.Instance.UpdateHealthSlider(playerManager.health);
+        UIManager.Instance.UpdateHealthSlider(playerManager.Health, playerManager.HealthSlider);
     }
 
 

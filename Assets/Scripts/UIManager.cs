@@ -12,9 +12,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject audioMenu;
     [SerializeField] private GameObject commandsMenu;
+    [SerializeField] private GameObject playMenu;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
-    public Slider HealthSlider;
+    [SerializeField] private TMP_Dropdown numberOfPlayersDropdown;
 
     private void Awake()
     {
@@ -31,6 +32,17 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         SetSavedSlidersValues();
+        SetListenerForDropdown();
+    }
+
+    private void SetListenerForDropdown()
+    {
+        if (numberOfPlayersDropdown != null)
+        {
+            numberOfPlayersDropdown.onValueChanged.AddListener(delegate {
+                ChangeNumberOfPlayers(numberOfPlayersDropdown);
+            });
+        }
     }
 
     private void SetSavedSlidersValues()
@@ -56,7 +68,8 @@ public class UIManager : MonoBehaviour
 
     public void PLayGame()
     {
-        GameManager.Instance.PlayGame();
+        playMenu.SetActive(false);
+        GameManager.Instance.SetNumberOfPlayers();
     }
 
     public void TogglePauseMenu(GameState currentState)
@@ -76,7 +89,7 @@ public class UIManager : MonoBehaviour
         mainMenu.SetActive(false);
     }
 
-    public void UpdateScoreText(int totalScore)
+    public void UpdateScoreText(int totalScore, TextMeshProUGUI scoreText)
     {
         scoreText.text = "SCORE: " + totalScore;
     }
@@ -93,9 +106,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateHealthSlider(int health)
+    public void UpdateHealthSlider(int health, Slider healthSlider)
     {
-        HealthSlider.value = health;
+        healthSlider.value = health;
     }
 
     public void LoadGameplayScene()
@@ -137,4 +150,19 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.PlayAgain();
     }
+
+    public void TogglePlayMenu()
+    {
+        if (playMenu.activeSelf)
+            playMenu.SetActive(false);
+        else
+            playMenu.SetActive(true);
+    }
+
+    public void ChangeNumberOfPlayers(TMP_Dropdown numberOfPlayersDropdown)
+    {
+        int numberOfPlayers = int.Parse(numberOfPlayersDropdown.captionText.text);
+        GameManager.Instance.GetNumberOfPlayers(numberOfPlayers);
+    }
+
 }

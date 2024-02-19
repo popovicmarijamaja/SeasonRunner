@@ -16,4 +16,13 @@ public class EnvironmentController : MonoBehaviour
         Speed += GameManager.SpeedIncrement * Time.deltaTime;
     }
 
+    public void TurnOffAndReturnChildrenToPull()
+    {
+        Transform parent = gameObject.transform.parent;
+        if (parent.GetComponentInChildren<SpawnManager>() == null)
+            return;
+        parent.GetComponentInChildren<SpawnManager>().ReturnObjectsInEnvironmentToPool(gameObject);
+        gameObject.SetActive(false);
+    }
+
 }

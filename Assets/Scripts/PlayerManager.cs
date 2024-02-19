@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
+using System;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -20,17 +24,27 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    public Slider HealthSlider;
     private PowerUpManager powerUpManager;
     public Animator CharacterAnimator;
     public BoxCollider CollectibleCollider;
     private Rigidbody characterRb;
     private BoxCollider characterBoxCollider;
 
+    public int Health;
+    public bool isDead;
     public bool IsShieldActive = false;
     public bool isMagnetActive = false;
     public bool isGunActive = false;
     private bool isTransitioning = false;
-    public int health;
+
+    public int TotalScore;
+    public int coinScore;
+    private float runningScore;
+    private float scoreIncrementPerSecond = 2f;
+    public const float SpeedIncrement = 0.03f;
+    private GameState CurrentState;
 
     private bool isGrounded;
     public bool IsGrounded
@@ -38,6 +52,7 @@ public class PlayerManager : MonoBehaviour
         get { return isGrounded; }
         set { isGrounded = value; }
     }
+
     private void Awake()
     {
         CharacterAnimator = character.GetComponent<Animator>();
@@ -46,77 +61,84 @@ public class PlayerManager : MonoBehaviour
         characterBoxCollider = character.GetComponent<BoxCollider>();
         powerUpManager = GetComponent<PowerUpManager>();
     }
+
     private void Start()
     {
-        health = HealthMaxValue;
+        Health = HealthMaxValue;
     }
 
-    private void Update() 
+    private void Update()
     {
-        HandleMovementInput();
-        HandleJumpInput();
-        HandleRollInput();
-        HandleShootInput();
-    }
-
-    private void HandleMovementInput()
-    {
-        if (!isTransitioning)
+        TotalScore = Convert.ToInt32(coinScore + runningScore);
+        if (CurrentState == GameState.Playing)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            runningScore += Time.deltaTime * scoreIncrementPerSecond;
+        }
+        scoreIncrementPerSecond += SpeedIncrement * Time.deltaTime;
+        UIManager.Instance.UpdateScoreText(TotalScore, scoreText);
+    }
+
+
+    public void HandleMovementInput(InputAction.CallbackContext context)
+    {
+        float inputValue = context.ReadValue<float>();
+
+        if (GameManager.Instance.CurrentState == GameState.Paused || isTransitioning || isDead || !context.performed)
+            return;
+
+        if (inputValue > 0)
+        {
+            if (transform.position == centrePos.position)
             {
-                if (transform.position == centrePos.position)
-                {
-                    SetCharacterAnimation(RightBool);
-                    StartCoroutine(MoveToPosition(rightPos.position));
-                }
-                else if (transform.position == leftPos.position)
-                {
-                    SetCharacterAnimation(RightBool);
-                    StartCoroutine(MoveToPosition(centrePos.position));
-                }
+                SetCharacterAnimation(RightBool);
+                StartCoroutine(MoveToPosition(rightPos.position));
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (transform.position == leftPos.position)
             {
-                if (transform.position == centrePos.position)
-                {
-                    SetCharacterAnimation(LeftBool);
-                    StartCoroutine(MoveToPosition(leftPos.position));
-                }
-                else if (transform.position == rightPos.position)
-                {
-                    SetCharacterAnimation(LeftBool);
-                    StartCoroutine(MoveToPosition(centrePos.position));
-                }
+                SetCharacterAnimation(RightBool);
+                StartCoroutine(MoveToPosition(centrePos.position));
             }
         }
-    }
-
-    private void HandleJumpInput()
-    {
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
+        else if (inputValue < 0)
         {
-            AudioManager.Instance.PlayJumpSound();
-            CharacterAnimator.SetTrigger(JumpTriggerParameter);
-            characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-            isGrounded = false;
+            if (transform.position == centrePos.position)
+            {
+                SetCharacterAnimation(LeftBool);
+                StartCoroutine(MoveToPosition(leftPos.position));
+            }
+            else if (transform.position == rightPos.position)
+            {
+                SetCharacterAnimation(LeftBool);
+                StartCoroutine(MoveToPosition(centrePos.position));
+            }
         }
     }
 
-    private void HandleRollInput()
+    public void HandleJumpInput(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            CharacterAnimator.SetTrigger(RollTriggerParameter);
-        }
+        if (!isGrounded || isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+            return;
+
+        AudioManager.Instance.PlayJumpSound();
+        CharacterAnimator.SetTrigger(JumpTriggerParameter);
+        characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        isGrounded = false;
     }
 
-    private void HandleShootInput()
+    public void HandleRollInput(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGunActive)
-        {
-            ShootFireball();
-        }
+        if (isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+            return;
+
+        CharacterAnimator.SetTrigger(RollTriggerParameter);
+    }
+
+    public void HandleShootInput(InputAction.CallbackContext context)
+    {
+        if (isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed || !isGunActive)
+            return;
+
+        ShootFireball();
     }
 
     private void SetCharacterAnimation(string boolName)
@@ -128,11 +150,11 @@ public class PlayerManager : MonoBehaviour
     {
         GameObject fireball = ObjectPool.Instance.GetFireball();
 
-        if (fireball != null)
-        {
-            fireball.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
-            fireball.SetActive(true);
-        }
+        if (fireball == null)
+            return;
+
+        fireball.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
+        fireball.SetActive(true);
     }
 
     private IEnumerator MoveToPosition(Vector3 targetPosition)
@@ -147,6 +169,7 @@ public class PlayerManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+
         CharacterAnimator.SetBool(RightBool, false);
         CharacterAnimator.SetBool(LeftBool, false);
         transform.position = targetPosition;
@@ -155,6 +178,8 @@ public class PlayerManager : MonoBehaviour
 
     public void SetPlayerState(GameState currentState)
     {
+        CurrentState = currentState;
+
         switch (currentState)
         {
             case GameState.Playing:
@@ -162,8 +187,10 @@ public class PlayerManager : MonoBehaviour
                 break;
             case GameState.GameOver:
                 CharacterAnimator.SetBool(DeathAnimBool, true);
+                isDead = true;
                 character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.z);
                 characterRb.constraints = RigidbodyConstraints.FreezeAll;
+                gameObject.GetComponent<PlayerManager>().enabled = false;
                 break;
             default:
                 CharacterAnimator.enabled = false;
@@ -173,27 +200,27 @@ public class PlayerManager : MonoBehaviour
 
     public void ActivateShield()
     {
-        powerUpManager.ActivateShield();
+        powerUpManager.ActivateShield(gameObject.GetComponent<PlayerManager>());
     }
 
     public void ActivateGun()
     {
-        powerUpManager.ActivateGun();
+        powerUpManager.ActivateGun(gameObject.GetComponent<PlayerManager>());
     }
 
     public void ActivateMagnet()
     {
-        powerUpManager.ActivateMagnet();
+        powerUpManager.ActivateMagnet(gameObject.GetComponent<PlayerManager>());
     }
 
     public void DecreaseHealth()
     {
-        health--;
+        Health--;
     }
 
     public void IncreaseHealth()
     {
-        health++;
+        Health++;
     }
 
     public void RollDown()
