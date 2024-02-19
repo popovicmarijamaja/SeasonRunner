@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private static bool isPlayAgain;
+    public static int NumberOfPlayers;
 
     private const int PlayerHealthMin = PlayerManager.HealthMinValue;
     private const int PlayerHealthMax = PlayerManager.HealthMaxValue;
@@ -16,9 +17,9 @@ public class GameManager : MonoBehaviour
     public const float SpeedIncrement = 0.03f;
     private const string GameplayScene = "Gameplay";
 
-    [SerializeField] private GameObject stage2;
+    [SerializeField] private GameObject stagePrefab;
     
-    public int NumberOfPlayers;
+    //public int NumberOfPlayers;
     
 
     public GameState CurrentState { get; private set; }
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
         if (isPlayAgain)
         {
             PlayGame();
+            SetNumberOfPlayers();
             SetIsPlayAgainBool(false);
         }
         else
@@ -51,6 +53,7 @@ public class GameManager : MonoBehaviour
     private void ShowMainMenu()
     {
         SetGameState(GameState.MainMenu);
+        GetNumberOfPlayers(1);
     }
 
     public void GetNumberOfPlayers(int number)
@@ -60,15 +63,30 @@ public class GameManager : MonoBehaviour
 
     public void SetNumberOfPlayers()
     {
-        CheckIfMultiplayer();
+        InstantiatePlayers();
         CameraManager.Instance.SetCamera(NumberOfPlayers);
         PlayGame();
     }
 
-    private void CheckIfMultiplayer()
+    private void InstantiatePlayers()
     {
-        if (NumberOfPlayers == 2)
-            stage2.SetActive(true);
+        for(int i = 1; i < NumberOfPlayers; i++)
+        {
+            GameObject obj = Instantiate(stagePrefab);
+            obj.transform.position = new Vector3(0f, 0f, (i * -50f));
+            obj.transform.GetComponentInChildren<PlayerManager>().SetControlScheme(i);
+        }
+
+        AudioListener[] listeners = FindObjectsOfType<AudioListener>();
+
+        // If there is more than one AudioListener, remove the extras
+        if (listeners.Length > 1)
+        {
+            for (int i = 1; i < listeners.Length; i++)
+            {
+                Destroy(listeners[i]);
+            }
+        }
     }
 
     private void SetIsPlayAgainBool(bool value)
@@ -145,6 +163,26 @@ public class GameManager : MonoBehaviour
             }
         }
         SetGameState(GameState.GameOver);
+        CheckWhoWon();
+    }
+
+    private void CheckWhoWon()
+    {
+        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+        if (players.Length == 1)
+            return;
+        int bestScore = 0;
+        int bestPlayer = 0;
+
+        for(int i = 0; i < players.Length; i++)
+        {
+            if (bestScore < players[i].TotalScore)
+            {
+                bestScore = players[i].TotalScore;
+                bestPlayer = i + 1;
+            }
+        }
+        UIManager.Instance.SetWinnerText(bestPlayer);
     }
 
     private void SetDeathByObstacleHit(PlayerManager playerManager)

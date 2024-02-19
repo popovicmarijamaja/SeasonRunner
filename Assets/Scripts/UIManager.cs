@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private TMP_Dropdown numberOfPlayersDropdown;
+    [SerializeField] private TMP_Text winnerText;
 
     private void Awake()
     {
@@ -104,6 +105,11 @@ public class UIManager : MonoBehaviour
         {
             youLostMenu.SetActive(false);
         }
+    }
+
+    public void SetWinnerText(int winner)
+    {
+        winnerText.text = "Player " + winner + " has won!";
     }
 
     public void UpdateHealthSlider(int health, Slider healthSlider)

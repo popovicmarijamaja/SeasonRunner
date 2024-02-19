@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
 {
     public const int HealthMaxValue = 4;
     public const int HealthMinValue = 0;
+    public const float SpeedIncrement = 0.03f;
     private const float TransitionDuration = 0.2f;
     private const float JumpForce = 5f;
     private const string JumpTriggerParameter = "jump";
@@ -43,8 +44,9 @@ public class PlayerManager : MonoBehaviour
     public int coinScore;
     private float runningScore;
     private float scoreIncrementPerSecond = 2f;
-    public const float SpeedIncrement = 0.03f;
     private GameState CurrentState;
+
+    private readonly string[] controlSchemes = { "Arrows", "WASD", "UHJK" };
 
     private bool isGrounded;
     public bool IsGrounded
@@ -243,4 +245,10 @@ public class PlayerManager : MonoBehaviour
     {
         boomParticle.Play();
     }
+
+    public void SetControlScheme(int number)
+    {
+        gameObject.GetComponent<PlayerInput>().SwitchCurrentControlScheme(controlSchemes[number], Keyboard.current);
+    }
+
 }

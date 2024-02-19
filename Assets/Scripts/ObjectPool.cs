@@ -5,11 +5,11 @@ public class ObjectPool : MonoBehaviour
 {
 	public static ObjectPool Instance;
 
-    private const int EnvironmentPoolSize = 6;
-    private const int FireballPoolSize = 30;
+    private const int EnvironmentPoolSize = 9;
+    private const int FireballPoolSize = 45;
     private const int BulletPoolSize = 40;
-    private const int CoinPoolSize = 22;
-    private const int ObstaclesPoolSize = 22;
+    private const int CoinPoolSize = 33;
+    private const int ObstaclesPoolSize = 33;
     private const int NumberOfRockInLine = 2;
 
     [SerializeField] private GameObject environmentPrefab;

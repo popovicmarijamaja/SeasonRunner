@@ -24,8 +24,7 @@ public class MagnetPower : MonoBehaviour
         if (other.CompareTag(PlayerRootTag))
         {
             isAttracted = true;
-            //player = other.gameObject;
-            player = GameObject.FindGameObjectWithTag(PlayerTag);
+            player = other.gameObject.transform.GetChild(0).gameObject;
         }
         if (other.CompareTag(PlayerTag))
         {
