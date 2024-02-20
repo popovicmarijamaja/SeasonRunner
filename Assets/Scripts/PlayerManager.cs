@@ -71,6 +71,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
+		// CR: Celu ovu logiku bih izdvojio u UpdateScore metodu, pa bih nju pozvao u Update. Update funkcija ima predodredjeno ime koje nam ne govori nista o tome sta se u njoj desava, pa je dobro da svu logiku unutra drzimo u lepo imenovanim metodama. Pogotovu zato sto je cest slucaj da Update radi vise od jedne stvari.
         TotalScore = Convert.ToInt32(coinScore + runningScore);
         if (CurrentState == GameState.Playing)
         {
@@ -178,7 +179,7 @@ public class PlayerManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void SetPlayerState(GameState currentState)
+    public void SetPlayerState(GameState currentState) // CR: Bolje ime za ovaj parametar je newState. On postaje current state tek unutar ove metode, kada se dodeli u CurrentState.
     {
         CurrentState = currentState;
 

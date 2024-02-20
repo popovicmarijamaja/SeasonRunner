@@ -24,7 +24,7 @@ public class MagnetPower : MonoBehaviour
         if (other.CompareTag(PlayerRootTag))
         {
             isAttracted = true;
-            player = other.gameObject.transform.GetChild(0).gameObject;
+            player = other.gameObject.transform.GetChild(0).gameObject; // CR: Izbegavaj da koristis GetChild(N). Ovakav kod ce da pukne sutradan ako budes morala da menjas nesto u hijerarhiji pa to sto trazis ne bude vise na indeksu 0. Getuj to sto trazis po komponenti ako mozes. Ako ne, tag ili nesto slicno je bolji izbor.
         }
         if (other.CompareTag(PlayerTag))
         {

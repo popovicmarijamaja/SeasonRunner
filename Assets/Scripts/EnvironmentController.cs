@@ -21,7 +21,7 @@ public class EnvironmentController : MonoBehaviour
         Transform parent = gameObject.transform.parent;
         if (parent.GetComponentInChildren<SpawnManager>() == null)
             return;
-        parent.GetComponentInChildren<SpawnManager>().ReturnObjectsInEnvironmentToPool(gameObject);
+        parent.GetComponentInChildren<SpawnManager>().ReturnObjectsInEnvironmentToPool(gameObject); // CR: Je l' ovo bila jedna od stvari koje ti se "ne svidja" kako si resila?
         gameObject.SetActive(false);
     }
 

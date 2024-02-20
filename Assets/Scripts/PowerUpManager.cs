@@ -12,7 +12,7 @@ public class PowerUpManager : MonoBehaviour
     {
         if (playerManager.isMagnetActive)
         {
-            StopCoroutine(MagnetCountDown(playerManager));
+            StopCoroutine(MagnetCountDown(playerManager)); // CR: Je l' ovo radi kako ocekujes? Nece da se desi da player 2 skupi svoj drugi magnet i prekine prvom igracu njegov magnet power up?
         }
 
         StartCoroutine(MagnetCountDown(playerManager));

@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject stagePrefab;
     
-    //public int NumberOfPlayers;
+	// CR: Obrisi stvari koje ti vise ne trebaju. Ovakvi komentari su mrtav kod. A ako ti zatreba nekad da vratis taj kod (sto kontam da ovde nije slucaj), git svakako pamti istoriju.
+    //public int NumberOfPlayers; 
     
 
     public GameState CurrentState { get; private set; }
@@ -56,12 +57,12 @@ public class GameManager : MonoBehaviour
         GetNumberOfPlayers(1);
     }
 
-    public void GetNumberOfPlayers(int number)
+    public void GetNumberOfPlayers(int number) // CR: Get se koristi za funkcije koje vracaju nesto (u ovom slucaju broj igraca, sto bi znacilo da je povratna vrednost int, a ne void). Ono sto tebi ovde treba je Set. Ali i to je bolje da resis preko set property-ja, ne mora da bude metoda.
     {
         NumberOfPlayers = number;
     }
 
-    public void SetNumberOfPlayers()
+    public void SetNumberOfPlayers() // CR: Ovo nije Set funkcija - ime joj je pogresno. Ovo je vise nekakav InitializeGame ili nesto slicno.
     {
         InstantiatePlayers();
         CameraManager.Instance.SetCamera(NumberOfPlayers);
@@ -77,7 +78,7 @@ public class GameManager : MonoBehaviour
             obj.transform.GetComponentInChildren<PlayerManager>().SetControlScheme(i);
         }
 
-        AudioListener[] listeners = FindObjectsOfType<AudioListener>();
+        AudioListener[] listeners = FindObjectsOfType<AudioListener>(); // Bolje je da player prefab ne sadrzi Listener pa da ga naknadno dodas jednom igracu, nego da ih instanciras N pa da brieses sve osim jednog.
 
         // If there is more than one AudioListener, remove the extras
         if (listeners.Length > 1)
@@ -95,29 +96,29 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void SetGameState(GameState state)
-    {
+    private void SetGameState(GameState state) // CR: Dobro ime za ovaj parametar je newState
+	{
         SetCurrentState(state);
         SetStateForEachPlayer(state);
     }
 
-    private void SetCurrentState(GameState state)
-    {
+    private void SetCurrentState(GameState state) // CR: Dobro ime za ovaj parametar je newState
+	{
         CurrentState = state;
     }
 
-    private void SetStateForEachPlayer(GameState state)
-    {
+    private void SetStateForEachPlayer(GameState state) // CR: Dobro ime za ovaj parametar je newState
+	{
         PlayerManager[] players = FindObjectsOfType<PlayerManager>();
 
         foreach (PlayerManager player in players)
         {
-            player.SetPlayerState(CurrentState);
+            player.SetPlayerState(CurrentState); // CR: Posto si vec prosledila newState kao parametar, iskoristi njega radije nego field CurrentState. Tacno je da ce ovde CurrentState sigurno da bude dobro postavljen, ali si ovako napravila implicitnu zavisnost - SetCurrentState mora da se pozove pre SetStateForEachPlayer. Kad bi koristila parametar, kod bi ti bio eksplicitan, otporan na promenu redosleda poziva u buducnosti, i plus je funkcija citljiva sama za sebe (trenutno moram da imam siri kontekst sta se poziva pre nje da bih razumeo celu funkcionalnost ove metode).
             if (state == GameState.Playing)
                 player.enabled = true;
             else
                 player.enabled = false;
-            SetEnvironmentMovement(player);
+            SetEnvironmentMovement(player); // CR: Na oba mesta gde pozivas ovu funkciju, pozivas je ubrzo nakon SetPlayerState. To je znak da bi ovo trebalo da bude deo SetPlayerState operacije (da se poziva unutar te funkcije).
         }
     }
 
@@ -138,19 +139,19 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.TogglePauseMenu(CurrentState);
     }
 
-    public void EndGame(PlayerManager playerManager)
+    public void EndGame(PlayerManager playerManager) // CR: Ovo vise nije EndGame. EndGameForPlayer je sada tacniji naziv. Mozda bih ja parametar ovde nazvao samo player radije nego playerManager, ali to je stvar preference.
     {
         playerManager.SetPlayerState(GameState.GameOver);
         CheckIfAllPlayersAreDead();
         StartCoroutine(WaitForEndOfDeathAnimation());
-        if (playerManager.Health == PlayerHealthMin)
+        if (playerManager.Health == PlayerHealthMin) // CR: Ovo mi smrdi. U sledecoj funkciji postavljas health na 0. Ako pre toga moras da bitas da li je health 0, to znaci da imas vise mesta gde moze da se postavi na 0, sto je lose.
             return;
         SetDeathByObstacleHit(playerManager);
         SetEnvironmentMovement(playerManager);
     }
 
 
-    private void CheckIfAllPlayersAreDead()
+    private void CheckIfAllPlayersAreDead() // CR: Ova funkcija radi vise od provere - ona zavrsava igru ukoliko su svi mrtvi. EndGameIfAllPlayersAreDead bi bilo bolje ime. Potencijalno je jos bolje da imas zasebnu bool funkciju AreAllPlayersDead, pa da u EndGame kazes tipa if (AreAllPlayersDead()) { EndGame(); }, gde bi EndGame bile zadnje dve linije ove funkcije.
     {
         PlayerManager[] players = FindObjectsOfType<PlayerManager>();
 
@@ -166,7 +167,7 @@ public class GameManager : MonoBehaviour
         CheckWhoWon();
     }
 
-    private void CheckWhoWon()
+    private void CheckWhoWon() // CR: I ova funkcija radi vise od provere. Mozda nesto tipa SetWinnerUi
     {
         PlayerManager[] players = FindObjectsOfType<PlayerManager>();
         if (players.Length == 1)
@@ -185,7 +186,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.SetWinnerText(bestPlayer);
     }
 
-    private void SetDeathByObstacleHit(PlayerManager playerManager)
+    private void SetDeathByObstacleHit(PlayerManager playerManager) // CR: Ja bih ovo podelio u dve funkcije: jedna koja sredjuje health i jedna koja se bavi efektima. Onda svaka moze da ima ilustrativno ime.
     {
         playerManager.PlayExplosionParticle();
         playerManager.Health = PlayerHealthMin;
@@ -205,7 +206,7 @@ public class GameManager : MonoBehaviour
         bool isPlaying;
         Transform playerParent = playerManager.gameObject.transform.parent;
 
-        if (playerManager.isDead)
+        if (playerManager.isDead) // CR: isDead je suvisan field - PlayerManager ima svoje stanje. Mogli bismo prosto da pitamo da li je njegov state GameOver, zar ne?
             isPlaying = false;
         else
             isPlaying = CurrentState == GameState.Playing;
@@ -248,7 +249,7 @@ public class GameManager : MonoBehaviour
 
     public void DamagePlayer(PlayerManager playerManager)
     {
-        playerManager.DecreaseHealth();
+        playerManager.DecreaseHealth(); // CR: Evo potvrde da se health na vise mesta postavlja na 0. Probaj da svedes da bude samo na jednom mestu. Ovde verovatno treba da postoji, ono u EndGame mi je sumnjivo.
         UIManager.Instance.UpdateHealthSlider(playerManager.Health, playerManager.HealthSlider);
         AudioManager.Instance.PlayHurtSound();
         if (playerManager.Health == PlayerHealthMin)
@@ -256,6 +257,7 @@ public class GameManager : MonoBehaviour
             EndGame(playerManager);
         }
     }
+
     public void CollectHeart(PlayerManager playerManager)
     {
         PlayPowerUpSoundAndParticle(playerManager);
