@@ -4,8 +4,9 @@ using UnityEngine.InputSystem;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using Fusion;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : NetworkBehaviour
 {
     public const int HealthMaxValue = 4;
     public const int HealthMinValue = 0;
@@ -19,9 +20,9 @@ public class PlayerManager : MonoBehaviour
     private const string DeathAnimBool = "death";
 
     [SerializeField] private GameObject character;
-    [SerializeField] private Transform leftPos;
-    [SerializeField] private Transform centrePos;
-    [SerializeField] private Transform rightPos;
+    private readonly Vector3 leftPos = new (0, 0, -1);
+    private readonly Vector3 centrePos = new (0, 0, 0);
+    private readonly Vector3 rightPos= new (0, 0, 1);
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
@@ -34,21 +35,18 @@ public class PlayerManager : MonoBehaviour
     private BoxCollider characterBoxCollider;
 
     public int Health;
-    public bool isDead;
+    public bool IsDead;
     public bool IsShieldActive = false;
-    public bool isMagnetActive = false;
-    public bool isGunActive = false;
-    private bool isTransitioning = false;
-
+    public bool IsMagnetActive = false;
+    public bool IsGunActive = false;
+    private bool isGrounded;
     public int TotalScore;
-    public int coinScore;
+    public int CoinScore;
     private float runningScore;
     private float scoreIncrementPerSecond = 2f;
-    private GameState CurrentState;
+    public GameState CurrentState;
 
-    private readonly string[] controlSchemes = { "Arrows", "WASD", "UHJK" };
 
-    private bool isGrounded;
     public bool IsGrounded
     {
         get { return isGrounded; }
@@ -71,8 +69,13 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-		// CR: Celu ovu logiku bih izdvojio u UpdateScore metodu, pa bih nju pozvao u Update. Update funkcija ima predodredjeno ime koje nam ne govori nista o tome sta se u njoj desava, pa je dobro da svu logiku unutra drzimo u lepo imenovanim metodama. Pogotovu zato sto je cest slucaj da Update radi vise od jedne stvari.
-        TotalScore = Convert.ToInt32(coinScore + runningScore);
+        //UpdateScore();
+    }
+    
+
+    private void UpdateScore()
+    {
+        TotalScore = Convert.ToInt32(CoinScore + runningScore);
         if (CurrentState == GameState.Playing)
         {
             runningScore += Time.deltaTime * scoreIncrementPerSecond;
@@ -81,56 +84,49 @@ public class PlayerManager : MonoBehaviour
         UIManager.Instance.UpdateScoreText(TotalScore, scoreText);
     }
 
-
     public void HandleMovementInput(InputAction.CallbackContext context)
     {
         float inputValue = context.ReadValue<float>();
 
-        if (GameManager.Instance.CurrentState == GameState.Paused || isTransitioning || isDead || !context.performed)
+        if (GameManager.Instance.CurrentState == GameState.Paused || IsDead || !context.performed)
             return;
 
         if (inputValue > 0)
         {
-            if (transform.position == centrePos.position)
+            if (transform.position == centrePos)
             {
-                SetCharacterAnimation(RightBool);
-                StartCoroutine(MoveToPosition(rightPos.position));
+                NetworkManager.bufferedInput.IsMoveRight = true;
             }
-            else if (transform.position == leftPos.position)
+            else if (transform.position == leftPos)
             {
-                SetCharacterAnimation(RightBool);
-                StartCoroutine(MoveToPosition(centrePos.position));
+                NetworkManager.bufferedInput.IsMoveCentre = true;
             }
         }
         else if (inputValue < 0)
         {
-            if (transform.position == centrePos.position)
+            if (transform.position == centrePos)
             {
-                SetCharacterAnimation(LeftBool);
-                StartCoroutine(MoveToPosition(leftPos.position));
+                NetworkManager.bufferedInput.IsMoveLeft = true;
             }
-            else if (transform.position == rightPos.position)
+            else if (transform.position == rightPos)
             {
-                SetCharacterAnimation(LeftBool);
-                StartCoroutine(MoveToPosition(centrePos.position));
+                NetworkManager.bufferedInput.IsMoveCentre = true;
             }
         }
     }
 
     public void HandleJumpInput(InputAction.CallbackContext context)
     {
-        if (!isGrounded || isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+        if (!isGrounded || IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
             return;
-
-        AudioManager.Instance.PlayJumpSound();
-        CharacterAnimator.SetTrigger(JumpTriggerParameter);
-        characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        NetworkManager.bufferedInput.IsJump = true;
+        //AudioManager.Instance.PlayJumpSound();
         isGrounded = false;
     }
 
     public void HandleRollInput(InputAction.CallbackContext context)
     {
-        if (isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
             return;
 
         CharacterAnimator.SetTrigger(RollTriggerParameter);
@@ -138,7 +134,7 @@ public class PlayerManager : MonoBehaviour
 
     public void HandleShootInput(InputAction.CallbackContext context)
     {
-        if (isDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed || !isGunActive)
+        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed || !IsGunActive)
             return;
 
         ShootFireball();
@@ -160,37 +156,18 @@ public class PlayerManager : MonoBehaviour
         fireball.SetActive(true);
     }
 
-    private IEnumerator MoveToPosition(Vector3 targetPosition)
+    public void SetPlayerState(GameState newState)
     {
-        isTransitioning = true;
-        float elapsedTime = 0f;
-        Vector3 startingPos = transform.position;
+        CurrentState = newState;
 
-        while (elapsedTime < TransitionDuration)
-        {
-            transform.position = Vector3.Lerp(startingPos, targetPosition, elapsedTime / TransitionDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        CharacterAnimator.SetBool(RightBool, false);
-        CharacterAnimator.SetBool(LeftBool, false);
-        transform.position = targetPosition;
-        isTransitioning = false;
-    }
-
-    public void SetPlayerState(GameState currentState) // CR: Bolje ime za ovaj parametar je newState. On postaje current state tek unutar ove metode, kada se dodeli u CurrentState.
-    {
-        CurrentState = currentState;
-
-        switch (currentState)
+        switch (newState)
         {
             case GameState.Playing:
                 CharacterAnimator.enabled = true;
                 break;
             case GameState.GameOver:
                 CharacterAnimator.SetBool(DeathAnimBool, true);
-                isDead = true;
+                IsDead = true;
                 character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.z);
                 characterRb.constraints = RigidbodyConstraints.FreezeAll;
                 gameObject.GetComponent<PlayerManager>().enabled = false;
@@ -199,6 +176,24 @@ public class PlayerManager : MonoBehaviour
                 CharacterAnimator.enabled = false;
                 break;
         }
+        SetEnvironmentMovement();
+    }
+
+    private void SetEnvironmentMovement()
+    {
+        bool isPlaying;
+        Transform playerParent = gameObject.transform.parent;
+
+        if (CurrentState == GameState.GameOver)
+            isPlaying = false;
+        else
+            isPlaying = CurrentState == GameState.Playing;
+
+        playerParent.GetComponentInChildren<EnvironmentController>().enabled = isPlaying;
+
+        foreach (var pooledObject in ObjectPool.Instance.EnvirontmentPool)
+            if (playerParent == pooledObject.transform.parent)
+                pooledObject.GetComponent<EnvironmentController>().enabled = isPlaying;
     }
 
     public void ActivateShield()
@@ -245,11 +240,6 @@ public class PlayerManager : MonoBehaviour
     public void PlayExplosionParticle()
     {
         boomParticle.Play();
-    }
-
-    public void SetControlScheme(int number)
-    {
-        gameObject.GetComponent<PlayerInput>().SwitchCurrentControlScheme(controlSchemes[number], Keyboard.current);
     }
 
 }

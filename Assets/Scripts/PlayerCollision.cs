@@ -47,7 +47,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(ObstacleTag))
         {
-            GameManager.Instance.EndGame(playerManager);
+            GameManager.Instance.SetDeathByObstacleHit(playerManager);
         }
     }
 
@@ -63,7 +63,7 @@ public class PlayerCollision : MonoBehaviour
     {
         if (other.CompareTag(EnemyTag) && other is CapsuleCollider)
         {
-            GameManager.Instance.EndGame(playerManager);
+            GameManager.Instance.SetDeathByObstacleHit(playerManager);
         }
     }
 

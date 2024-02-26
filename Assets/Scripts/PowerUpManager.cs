@@ -10,7 +10,7 @@ public class PowerUpManager : MonoBehaviour
 
     public void ActivateMagnet(PlayerManager playerManager)
     {
-        if (playerManager.isMagnetActive)
+        if (playerManager.IsMagnetActive)
         {
             StopCoroutine(MagnetCountDown(playerManager)); // CR: Je l' ovo radi kako ocekujes? Nece da se desi da player 2 skupi svoj drugi magnet i prekine prvom igracu njegov magnet power up?
         }
@@ -20,16 +20,16 @@ public class PowerUpManager : MonoBehaviour
 
     private IEnumerator MagnetCountDown(PlayerManager playerManager)
     {
-        playerManager.isMagnetActive = true;
+        playerManager.IsMagnetActive = true;
         playerManager.CollectibleCollider.enabled = true;
         yield return new WaitForSeconds(MagnetDuration);
         playerManager.CollectibleCollider.enabled = false;
-        playerManager.isMagnetActive = false;
+        playerManager.IsMagnetActive = false;
     }
 
     public void ActivateGun(PlayerManager playerManager)
     {
-        if (playerManager.isGunActive)
+        if (playerManager.IsGunActive)
         {
             StopCoroutine(GunCountDown(playerManager));
         }
@@ -39,9 +39,9 @@ public class PowerUpManager : MonoBehaviour
 
     private IEnumerator GunCountDown(PlayerManager playerManager)
     {
-        playerManager.isGunActive = true;
+        playerManager.IsGunActive = true;
         yield return new WaitForSeconds(GunDuration);
-        playerManager.isGunActive = false;
+        playerManager.IsGunActive = false;
     }
 
     public void ActivateShield(PlayerManager playerManager)

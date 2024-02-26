@@ -8,6 +8,10 @@ public class CameraManager : MonoBehaviour
     private const float Height = 1f;
 
     private Camera[] cameras;
+    private void Update()
+    {
+        SetCamera();
+    }
 
     private void Awake()
     {
@@ -21,12 +25,13 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    public void SetCamera(int numberOfPlayers)
+    public void SetCamera()
     {
         cameras = FindObjectsOfType<Camera>();
-        for(int i = 0; i < numberOfPlayers; i++)
+
+        for (int i = 0; i < cameras.Length; i++)
         {
-            float width = 1f / numberOfPlayers;
+            float width = 1f / cameras.Length;
             float xPos = i * width;
             cameras[i].rect = new Rect(xPos, YPos, width, Height);
         }

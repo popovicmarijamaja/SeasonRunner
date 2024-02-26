@@ -69,8 +69,9 @@ public class UIManager : MonoBehaviour
 
     public void PLayGame()
     {
+        NetworkManager.Instance.StartGame(Fusion.GameMode.Host);
         playMenu.SetActive(false);
-        GameManager.Instance.SetNumberOfPlayers();
+        GameManager.Instance.InitializeGame();
     }
 
     public void TogglePauseMenu(GameState currentState)
@@ -168,7 +169,16 @@ public class UIManager : MonoBehaviour
     public void ChangeNumberOfPlayers(TMP_Dropdown numberOfPlayersDropdown)
     {
         int numberOfPlayers = int.Parse(numberOfPlayersDropdown.captionText.text);
-        GameManager.Instance.GetNumberOfPlayers(numberOfPlayers);
+        GameManager.Instance.NumberOfPlayers = numberOfPlayers;
+    }
+
+    //Testing
+
+    public void JoinTheGame()
+    {
+        NetworkManager.Instance.StartGame(Fusion.GameMode.Client);
+        playMenu.SetActive(false);
+        HideMainMenu();
     }
 
 }

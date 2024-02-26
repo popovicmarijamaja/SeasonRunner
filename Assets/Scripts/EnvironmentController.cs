@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnvironmentController : MonoBehaviour
 {
     private static float Speed;
+    private const string TurnEnvironmentOffTag = "turnEnvironmentOff";
 
     private void Awake()
     {
@@ -11,12 +12,24 @@ public class EnvironmentController : MonoBehaviour
 
     private void Update()
     {
-        //Environment is moving
+        Move();
+    }
+
+    private void Move()
+    {
         transform.position += Time.deltaTime * Speed * Vector3.right;
         Speed += GameManager.SpeedIncrement * Time.deltaTime;
     }
 
-    public void TurnOffAndReturnChildrenToPull()
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag(TurnEnvironmentOffTag))
+        {
+            TurnOffAndReturnChildrenToPool();
+        }
+    }
+
+    public void TurnOffAndReturnChildrenToPool()
     {
         Transform parent = gameObject.transform.parent;
         if (parent.GetComponentInChildren<SpawnManager>() == null)

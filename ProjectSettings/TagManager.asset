@@ -20,6 +20,7 @@ TagManager:
   - gun
   - fire
   - bullet
+  - firstCamera
   layers:
   - Default
   - TransparentFX
