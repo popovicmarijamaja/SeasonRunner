@@ -61,10 +61,11 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             // Create a unique position for the player
             Vector3 playerSpawnPosition = new Vector3(0, 0, i*-50f);
             Vector3 stageSpawnPosition = new Vector3(-12, 0, i * -50f);
-            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.identity, player);
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0,-90,0), player);
             NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
+            networkPlayerObject.GetComponent<PlayerManager>().GetPos(networkStageObject.GetComponent<StageManager>().leftPos, networkStageObject.GetComponent<StageManager>().centrePos, networkStageObject.GetComponent<StageManager>().rightPos);
+            networkPlayerObject.GetComponent<PlayerNetworkMovement>().GetPos(networkStageObject.GetComponent<StageManager>().leftPos, networkStageObject.GetComponent<StageManager>().centrePos, networkStageObject.GetComponent<StageManager>().rightPos);
             // Keep track of the player avatars for easy access
-            //_spawnedCharacters.Add(player, networkPlayerObject);
             _spawnedCharacters.Add(player, gameObject.AddComponent<PlayerObjects>());
             i++;
         }

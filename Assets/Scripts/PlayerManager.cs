@@ -19,20 +19,21 @@ public class PlayerManager : NetworkBehaviour
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
-    [SerializeField] private GameObject character;
-    private readonly Vector3 leftPos = new (0, 0, -1);
-    private readonly Vector3 centrePos = new (0, 0, 0);
-    private readonly Vector3 rightPos= new (0, 0, 1);
+    //[SerializeField] private GameObject character;
+    private Transform leftPos;
+    private Transform centrePos;
+    private Transform rightPos;
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private GameObject character;
     public Slider HealthSlider;
     private PowerUpManager powerUpManager;
-    public Animator CharacterAnimator;
+    private Animator Animator;
     public BoxCollider CollectibleCollider;
-    private Rigidbody characterRb;
-    private BoxCollider characterBoxCollider;
+    private Rigidbody Rigidbody;
+    private BoxCollider BoxCollider;
 
     public int Health;
     public bool IsDead;
@@ -55,16 +56,23 @@ public class PlayerManager : NetworkBehaviour
 
     private void Awake()
     {
-        CharacterAnimator = character.GetComponent<Animator>();
+        Animator = GetComponent<Animator>();
         CollectibleCollider = GetComponent<BoxCollider>();
-        characterRb = character.GetComponent<Rigidbody>();
-        characterBoxCollider = character.GetComponent<BoxCollider>();
+        Rigidbody = GetComponent<Rigidbody>();
+        BoxCollider = GetComponent<BoxCollider>();
         powerUpManager = GetComponent<PowerUpManager>();
     }
 
     private void Start()
     {
         Health = HealthMaxValue;
+    }
+
+    public void GetPos(Transform left, Transform centre, Transform right)
+    {
+        leftPos = left;
+        centrePos = centre;
+        rightPos= right;
     }
 
     private void Update()
@@ -93,22 +101,22 @@ public class PlayerManager : NetworkBehaviour
 
         if (inputValue > 0)
         {
-            if (transform.position == centrePos)
+            if (transform.position.z == centrePos.position.z)
             {
                 NetworkManager.bufferedInput.IsMoveRight = true;
             }
-            else if (transform.position == leftPos)
+            else if (transform.position.z == leftPos.position.z)
             {
                 NetworkManager.bufferedInput.IsMoveCentre = true;
             }
         }
         else if (inputValue < 0)
         {
-            if (transform.position == centrePos)
+            if (transform.position.z == centrePos.position.z)
             {
                 NetworkManager.bufferedInput.IsMoveLeft = true;
             }
-            else if (transform.position == rightPos)
+            else if (transform.position.z == rightPos.position.z || transform.position.z >= rightPos.position.z - 0.1)
             {
                 NetworkManager.bufferedInput.IsMoveCentre = true;
             }
@@ -129,7 +137,7 @@ public class PlayerManager : NetworkBehaviour
         if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
             return;
 
-        CharacterAnimator.SetTrigger(RollTriggerParameter);
+        //CharacterAnimator.SetTrigger(RollTriggerParameter);
     }
 
     public void HandleShootInput(InputAction.CallbackContext context)
@@ -142,7 +150,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void SetCharacterAnimation(string boolName)
     {
-        CharacterAnimator.SetBool(boolName, true);
+        //CharacterAnimator.SetBool(boolName, true);
     }
 
     private void ShootFireball()
@@ -163,17 +171,17 @@ public class PlayerManager : NetworkBehaviour
         switch (newState)
         {
             case GameState.Playing:
-                CharacterAnimator.enabled = true;
+                Animator.enabled = true;
                 break;
             case GameState.GameOver:
-                CharacterAnimator.SetBool(DeathAnimBool, true);
+                Animator.SetBool(DeathAnimBool, true);
                 IsDead = true;
-                character.transform.position = new Vector3(character.transform.position.x, 0, character.transform.position.z);
-                characterRb.constraints = RigidbodyConstraints.FreezeAll;
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 gameObject.GetComponent<PlayerManager>().enabled = false;
                 break;
             default:
-                CharacterAnimator.enabled = false;
+                Animator.enabled = false;
                 break;
         }
         SetEnvironmentMovement();
@@ -223,14 +231,14 @@ public class PlayerManager : NetworkBehaviour
 
     public void RollDown()
     {
-        characterBoxCollider.size = new Vector3(characterBoxCollider.size.x, 1.2f, characterBoxCollider.size.z);
-        characterBoxCollider.center = new Vector3(characterBoxCollider.center.x, 0f, characterBoxCollider.center.z);
+        BoxCollider.size = new Vector3(BoxCollider.size.x, 1.2f, BoxCollider.size.z);
+        BoxCollider.center = new Vector3(BoxCollider.center.x, 0f, BoxCollider.center.z);
     }
 
     public void RollUp()
     {
-        characterBoxCollider.size = new Vector3(characterBoxCollider.size.x, 2f, characterBoxCollider.size.z);
-        characterBoxCollider.center = new Vector3(characterBoxCollider.center.x, 0.956f, characterBoxCollider.center.z);
+        BoxCollider.size = new Vector3(BoxCollider.size.x, 2f, BoxCollider.size.z);
+        BoxCollider.center = new Vector3(BoxCollider.center.x, 0.956f, BoxCollider.center.z);
     }
 
     public void PlayCollectionParticle()
