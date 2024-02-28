@@ -10,7 +10,7 @@ public class CameraManager : MonoBehaviour
     private Camera[] cameras;
     private void Update()
     {
-        SetCamera();
+        //SetCamera();
     }
 
     private void Awake()

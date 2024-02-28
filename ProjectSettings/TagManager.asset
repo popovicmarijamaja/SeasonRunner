@@ -21,6 +21,7 @@ TagManager:
   - fire
   - bullet
   - firstCamera
+  - stage
   layers:
   - Default
   - TransparentFX

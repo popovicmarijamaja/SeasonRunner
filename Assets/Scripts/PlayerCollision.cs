@@ -16,12 +16,12 @@ public class PlayerCollision : MonoBehaviour
     private const string BulletTag = "bullet";
 
     private PlayerManager playerManager;
-    [SerializeField] private Transform environmentSpawnPos;
-    [SerializeField] private SpawnManager spawnManager;
+    public Transform environmentSpawnPos;
+    public SpawnManager spawnManager;
 
     private void Awake()
     {
-        playerManager = GetComponentInParent<PlayerManager>();
+        playerManager = GetComponent<PlayerManager>();
     }
 
     private void OnTriggerEnter(Collider other)

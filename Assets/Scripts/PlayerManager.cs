@@ -26,7 +26,7 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
-    [SerializeField] private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject character;
     public Slider HealthSlider;
     private PowerUpManager powerUpManager;
@@ -34,6 +34,7 @@ public class PlayerManager : NetworkBehaviour
     public BoxCollider CollectibleCollider;
     private Rigidbody Rigidbody;
     private BoxCollider BoxCollider;
+    private GameObject stage;
 
     public int Health;
     public bool IsDead;
@@ -46,6 +47,7 @@ public class PlayerManager : NetworkBehaviour
     private float runningScore;
     private float scoreIncrementPerSecond = 2f;
     public GameState CurrentState;
+    public int PlayerID;
 
 
     public bool IsGrounded
@@ -57,15 +59,44 @@ public class PlayerManager : NetworkBehaviour
     private void Awake()
     {
         Animator = GetComponent<Animator>();
-        CollectibleCollider = GetComponent<BoxCollider>();
         Rigidbody = GetComponent<Rigidbody>();
         BoxCollider = GetComponent<BoxCollider>();
         powerUpManager = GetComponent<PowerUpManager>();
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        PlayerID = players.Length;
     }
 
     private void Start()
     {
         Health = HealthMaxValue;
+
+        
+        SetComponents();
+
+    }
+    public void SetComponents()
+    {
+        CameraManager.Instance.SetCamera();
+        GameObject[] stages = GameObject.FindGameObjectsWithTag("stage");
+        print("broj stageova " + stages.Length);
+        for (int i = 0; i < stages.Length; i++)
+        {
+            if (PlayerID == stages[i].GetComponent<StageManager>().StageID)
+            {
+                stage = stages[i];
+                StageManager stageManager = stage.GetComponent<StageManager>();
+                print("stiglo");
+                GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
+                gameObject.GetComponent<PlayerNetworkMovement>().GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
+                scoreText = stageManager.scoreText;
+                HealthSlider = stageManager.HealthSlider;
+                gameObject.GetComponent<PlayerCollision>().environmentSpawnPos = stageManager.environmentSpawnPos;
+                gameObject.GetComponent<PlayerCollision>().spawnManager = stageManager.spawnManager;
+            }
+            else
+                print("nije stiglo");
+        }
+        SetPlayerState(GameState.Playing);
     }
 
     public void GetPos(Transform left, Transform centre, Transform right)
@@ -77,7 +108,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void Update()
     {
-        //UpdateScore();
+        UpdateScore();
     }
     
 
@@ -128,7 +159,7 @@ public class PlayerManager : NetworkBehaviour
         if (!isGrounded || IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
             return;
         NetworkManager.bufferedInput.IsJump = true;
-        //AudioManager.Instance.PlayJumpSound();
+        AudioManager.Instance.PlayJumpSound();
         isGrounded = false;
     }
 
@@ -136,8 +167,7 @@ public class PlayerManager : NetworkBehaviour
     {
         if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
             return;
-
-        //CharacterAnimator.SetTrigger(RollTriggerParameter);
+        NetworkManager.bufferedInput.IsCrawl = true;
     }
 
     public void HandleShootInput(InputAction.CallbackContext context)
@@ -146,11 +176,6 @@ public class PlayerManager : NetworkBehaviour
             return;
 
         ShootFireball();
-    }
-
-    private void SetCharacterAnimation(string boolName)
-    {
-        //CharacterAnimator.SetBool(boolName, true);
     }
 
     private void ShootFireball()
@@ -167,7 +192,7 @@ public class PlayerManager : NetworkBehaviour
     public void SetPlayerState(GameState newState)
     {
         CurrentState = newState;
-
+        print("current state je: " + CurrentState);
         switch (newState)
         {
             case GameState.Playing:
@@ -190,8 +215,8 @@ public class PlayerManager : NetworkBehaviour
     private void SetEnvironmentMovement()
     {
         bool isPlaying;
-        Transform playerParent = gameObject.transform.parent;
-
+        //Transform playerParent = gameObject.transform.parent;
+        Transform playerParent = stage.transform;
         if (CurrentState == GameState.GameOver)
             isPlaying = false;
         else
@@ -202,6 +227,7 @@ public class PlayerManager : NetworkBehaviour
         foreach (var pooledObject in ObjectPool.Instance.EnvirontmentPool)
             if (playerParent == pooledObject.transform.parent)
                 pooledObject.GetComponent<EnvironmentController>().enabled = isPlaying;
+        //print("current state je: " + CurrentState);
     }
 
     public void ActivateShield()

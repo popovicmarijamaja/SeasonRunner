@@ -85267,7 +85267,7 @@ GameObject:
   - component: {fileID: 6594871156919985968}
   m_Layer: 0
   m_Name: Stage
-  m_TagString: Untagged
+  m_TagString: stage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85306,6 +85306,11 @@ MonoBehaviour:
   leftPos: {fileID: 4920713730026026976}
   rightPos: {fileID: 1609208294196826831}
   centrePos: {fileID: 4542875976527949885}
+  environmentSpawnPos: {fileID: 609540607089741514}
+  spawnManager: {fileID: 786605465442396353}
+  scoreText: {fileID: 1117517886595563944}
+  HealthSlider: {fileID: 8342306766611482083}
+  StageID: 0
 --- !u!114 &3249112157421817557
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,5 +13,4 @@ public struct NetworkInputData : INetworkInput
     public NetworkBool IsMoveCentre;
     public NetworkBool IsMoveRight;
 
-
 }

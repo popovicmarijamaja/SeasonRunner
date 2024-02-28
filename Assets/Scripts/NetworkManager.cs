@@ -16,6 +16,8 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkPrefabRef _stagePrefab;
     // private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private Dictionary<PlayerRef, PlayerObjects> _spawnedCharacters = new Dictionary<PlayerRef, PlayerObjects>();
+    public List<NetworkObject>players= new List<NetworkObject>();
+    public List<NetworkObject> stages = new List<NetworkObject>();
     int i = 0;
 
     private void Awake()
@@ -59,17 +61,35 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         if (runner.IsServer)
         {
             // Create a unique position for the player
-            Vector3 playerSpawnPosition = new Vector3(0, 0, i*-50f);
+            Vector3 playerSpawnPosition = new Vector3(0, 0, i * -50f);
             Vector3 stageSpawnPosition = new Vector3(-12, 0, i * -50f);
-            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0,-90,0), player);
             NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
-            networkPlayerObject.GetComponent<PlayerManager>().GetPos(networkStageObject.GetComponent<StageManager>().leftPos, networkStageObject.GetComponent<StageManager>().centrePos, networkStageObject.GetComponent<StageManager>().rightPos);
-            networkPlayerObject.GetComponent<PlayerNetworkMovement>().GetPos(networkStageObject.GetComponent<StageManager>().leftPos, networkStageObject.GetComponent<StageManager>().centrePos, networkStageObject.GetComponent<StageManager>().rightPos);
-            // Keep track of the player avatars for easy access
-            _spawnedCharacters.Add(player, gameObject.AddComponent<PlayerObjects>());
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0, -90, 0), player);
+            
+            //NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
+
+            /*PlayerObjects playerObjects = new PlayerObjects();
+            playerObjects.PlayerObject = networkPlayerObject;
+            playerObjects.StageObject = networkStageObject;
+            _spawnedCharacters.Add(player, playerObjects);
+            players.Add(networkPlayerObject);
+            stages.Add(networkStageObject);*/
             i++;
         }
+        /*if (player == runner.LocalPlayer)
+        {
+            Debug.Log("da");
+            PlayerObjects playerObjects = _spawnedCharacters[player];
+            NetworkObject playerObject = playerObjects.PlayerObject;
+            NetworkObject stageObject = playerObjects.StageObject;
+            playerObject.GetComponent<PlayerManager>().GetPos(stageObject.GetComponent<StageManager>().leftPos,
+               stageObject.GetComponent<StageManager>().centrePos, stageObject.GetComponent<StageManager>().rightPos);
+            playerObject.GetComponent<PlayerNetworkMovement>().GetPos(stageObject.GetComponent<StageManager>().leftPos,
+                stageObject.GetComponent<StageManager>().centrePos, stageObject.GetComponent<StageManager>().rightPos);
+        }*/
     }
+
+
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         // Check if the player exists in the dictionary
@@ -111,7 +131,9 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-    public void OnConnectedToServer(NetworkRunner runner) { }
+    public void OnConnectedToServer(NetworkRunner runner) {
+        //GameManager.Instance.SetGameState(GameState.Playing);
+    }
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }

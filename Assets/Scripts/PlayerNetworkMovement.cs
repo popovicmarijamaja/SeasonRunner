@@ -13,15 +13,13 @@ public class PlayerNetworkMovement : NetworkBehaviour
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
     [SerializeField] private GameObject character;
-    /*private readonly Vector3 leftPos = new(0, 0, -1);
-    private readonly Vector3 centrePos = new(0, 0, 0);
-    private readonly Vector3 rightPos = new(0, 0, 1);*/
     private Transform leftPos;
     private Transform centrePos;
     private Transform rightPos;
     private Animator CharacterAnimator;
     private Rigidbody characterRb;
     private NetworkMecanimAnimator _networkAnimator;
+
     private void Awake()
     {
         CharacterAnimator = GetComponent<Animator>();
@@ -47,9 +45,9 @@ public class PlayerNetworkMovement : NetworkBehaviour
             else if (data.IsMoveCentre)
             {
                 NetworkManager.bufferedInput.IsMoveCentre = false;
-                if(transform.localPosition.z == leftPos.position.z)
+                if(transform.position.z == leftPos.position.z)
                     SetCharacterAnimation(RightBool);
-                else if (transform.localPosition.z == rightPos.position.z)
+                else if (transform.position.z == rightPos.position.z)
                     SetCharacterAnimation(LeftBool);
                 StartCoroutine(MoveToPosition(centrePos.position));
             }
@@ -64,6 +62,11 @@ public class PlayerNetworkMovement : NetworkBehaviour
                 NetworkManager.bufferedInput.IsJump = false;
                 _networkAnimator.SetTrigger(JumpTriggerParameter);
                 characterRb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+            }
+            if (data.IsCrawl)
+            {
+                NetworkManager.bufferedInput.IsCrawl = false;
+                _networkAnimator.SetTrigger(RollTriggerParameter);
             }
         }
     }

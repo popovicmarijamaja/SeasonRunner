@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         //FindObjectOfType<Camera>().enabled = false;
         CameraManager.Instance.SetCamera();
         UIManager.Instance.HideMainMenu();
-        //PlayGame();
+        PlayGame();
     }
 
     /*private void InstantiatePlayers()
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private void SetGameState(GameState newState)
+    public void SetGameState(GameState newState)
 	{
         SetCurrentState(newState);
         SetStateForEachPlayer(newState);
@@ -98,9 +98,10 @@ public class GameManager : MonoBehaviour
     private void SetStateForEachPlayer(GameState newState)
 	{
         PlayerManager[] players = FindObjectsOfType<PlayerManager>();
-
+        print(players.Length);
         foreach (PlayerManager player in players)
         {
+            print("current state je: " + CurrentState);
             player.SetPlayerState(newState);
             if (newState == GameState.Playing)
                 player.enabled = true;
@@ -228,7 +229,7 @@ public class GameManager : MonoBehaviour
 
     public void DamagePlayer(PlayerManager playerManager)
     {
-        playerManager.DecreaseHealth(); // CR: Evo potvrde da se health na vise mesta postavlja na 0. Probaj da svedes da bude samo na jednom mestu. Ovde verovatno treba da postoji, ono u EndGame mi je sumnjivo.
+        playerManager.DecreaseHealth(); 
         UIManager.Instance.UpdateHealthSlider(playerManager.Health, playerManager.HealthSlider);
         AudioManager.Instance.PlayHurtSound();
         if (playerManager.Health == PlayerHealthMin)
