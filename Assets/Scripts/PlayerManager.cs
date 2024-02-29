@@ -19,7 +19,6 @@ public class PlayerManager : NetworkBehaviour
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
-    //[SerializeField] private GameObject character;
     private Transform leftPos;
     private Transform centrePos;
     private Transform rightPos;
@@ -70,13 +69,14 @@ public class PlayerManager : NetworkBehaviour
     {
         Health = HealthMaxValue;
 
-        
+
         SetComponents();
+        CameraManager.Instance.SetCamera();
 
     }
     public void SetComponents()
     {
-        CameraManager.Instance.SetCamera();
+        //CameraManager.Instance.SetCamera();
         GameObject[] stages = GameObject.FindGameObjectsWithTag("stage");
         print("broj stageova " + stages.Length);
         for (int i = 0; i < stages.Length; i++)
@@ -96,7 +96,7 @@ public class PlayerManager : NetworkBehaviour
             else
                 print("nije stiglo");
         }
-        SetPlayerState(GameState.Playing);
+        GameManager.Instance.InitializeGame();
     }
 
     public void GetPos(Transform left, Transform centre, Transform right)
@@ -127,7 +127,7 @@ public class PlayerManager : NetworkBehaviour
     {
         float inputValue = context.ReadValue<float>();
 
-        if (GameManager.Instance.CurrentState == GameState.Paused || IsDead || !context.performed)
+        if (CanMove(context) == false)
             return;
 
         if (inputValue > 0)
@@ -153,29 +153,59 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
+    private bool CanMove(InputAction.CallbackContext context)
+    {
+        if (GameManager.Instance.CurrentState == GameState.Paused || IsDead || !context.performed)
+            return false;
+        else
+            return true;
+    }
 
     public void HandleJumpInput(InputAction.CallbackContext context)
     {
-        if (!isGrounded || IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+        if (CanJump(context) == false)
             return;
         NetworkManager.bufferedInput.IsJump = true;
         AudioManager.Instance.PlayJumpSound();
         isGrounded = false;
     }
+    private bool CanJump(InputAction.CallbackContext context)
+    {
+        if (!isGrounded || IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+            return false;
+        else
+            return true;
+    }
 
     public void HandleRollInput(InputAction.CallbackContext context)
     {
-        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+        if (CanRoll(context) == false)
             return;
         NetworkManager.bufferedInput.IsCrawl = true;
     }
 
+    private bool CanRoll(InputAction.CallbackContext context)
+    {
+        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed)
+            return false;
+        else
+            return true;
+    }
+
     public void HandleShootInput(InputAction.CallbackContext context)
     {
-        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed || !IsGunActive)
+        if (CanShoot(context) == false)
             return;
 
         ShootFireball();
+    }
+
+    private bool CanShoot(InputAction.CallbackContext context)
+    {
+        if (IsDead || GameManager.Instance.CurrentState == GameState.Paused || !context.performed || !IsGunActive)
+            return false;
+        else
+            return true;
     }
 
     private void ShootFireball()
@@ -227,7 +257,6 @@ public class PlayerManager : NetworkBehaviour
         foreach (var pooledObject in ObjectPool.Instance.EnvirontmentPool)
             if (playerParent == pooledObject.transform.parent)
                 pooledObject.GetComponent<EnvironmentController>().enabled = isPlaying;
-        //print("current state je: " + CurrentState);
     }
 
     public void ActivateShield()

@@ -66,14 +66,13 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0, -90, 0), player);
             
-            //NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
-
-            /*PlayerObjects playerObjects = new PlayerObjects();
+            
+            PlayerObjects playerObjects = new PlayerObjects();
             playerObjects.PlayerObject = networkPlayerObject;
             playerObjects.StageObject = networkStageObject;
             _spawnedCharacters.Add(player, playerObjects);
             players.Add(networkPlayerObject);
-            stages.Add(networkStageObject);*/
+            stages.Add(networkStageObject);
             i++;
         }
         /*if (player == runner.LocalPlayer)
@@ -110,11 +109,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             // Remove the player from the dictionary
             _spawnedCharacters.Remove(player);
 
-            /*if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
-            {
-                runner.Despawn(networkObject);
-                _spawnedCharacters.Remove(player);
-            }*/
+            
     }
     public static NetworkInputData bufferedInput = new NetworkInputData();
     public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -132,7 +127,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnConnectedToServer(NetworkRunner runner) {
-        //GameManager.Instance.SetGameState(GameState.Playing);
     }
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }

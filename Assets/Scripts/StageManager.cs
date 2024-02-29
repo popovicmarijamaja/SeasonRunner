@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Fusion;
 
-public class StageManager : MonoBehaviour
+public class StageManager : NetworkBehaviour
 {
     public Transform leftPos;
     public Transform rightPos;
