@@ -41360,13 +41360,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9357838e7b9dd454f8c2abf0407decf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 7502566074389530811}
+  leftPos: {fileID: 0}
+  centrePos: {fileID: 0}
+  rightPos: {fileID: 0}
   firePoint: {fileID: 7037312466009148996}
   collectibleParticle: {fileID: 7870124942179727235}
   boomParticle: {fileID: 69108153150013980}
   scoreText: {fileID: 0}
+  character: {fileID: 7502566074389530811}
   HealthSlider: {fileID: 0}
-  CharacterAnimator: {fileID: 6410613998030312062}
   CollectibleCollider: {fileID: 1290325075231892548}
   Health: 0
   IsDead: 0
@@ -41376,6 +41378,7 @@ MonoBehaviour:
   TotalScore: 0
   CoinScore: 0
   CurrentState: 0
+  PlayerID: 0
 --- !u!114 &3425821952762933658
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -66,6 +66,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0, -90, 0), player);
             
+           // RPC_SetComponents(player, networkPlayerObject, networkStageObject);
             
             PlayerObjects playerObjects = new PlayerObjects();
             playerObjects.PlayerObject = networkPlayerObject;
@@ -88,6 +89,18 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         }*/
     }
 
+    /*[Rpc(Channel = RpcChannel.Reliable)]
+    public void RPC_SetComponents([RpcTarget] PlayerRef player,NetworkObject networkPlayerObject, NetworkObject networkStageObject)
+    {
+        StageManager stageManager = networkStageObject.GetComponent<StageManager>();
+        PlayerManager playerManager = networkPlayerObject.GetComponent<PlayerManager>();
+        PlayerCollision playerCollision=networkPlayerObject.GetComponent<PlayerCollision>();
+        playerManager.GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
+        playerManager.scoreText = stageManager.scoreText;
+        playerManager.HealthSlider = stageManager.HealthSlider;
+        playerCollision.environmentSpawnPos = stageManager.environmentSpawnPos;
+        playerCollision.spawnManager=stageManager.spawnManager;
+    }*/
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {

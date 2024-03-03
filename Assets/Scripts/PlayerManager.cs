@@ -19,13 +19,13 @@ public class PlayerManager : NetworkBehaviour
     private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
-    private Transform leftPos;
-    private Transform centrePos;
-    private Transform rightPos;
+    public Transform leftPos;
+    public Transform centrePos;
+    public Transform rightPos;
     [SerializeField] private Transform firePoint;
     [SerializeField] private ParticleSystem collectibleParticle;
     [SerializeField] private ParticleSystem boomParticle;
-    private TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText;
     [SerializeField] private GameObject character;
     public Slider HealthSlider;
     private PowerUpManager powerUpManager;
@@ -47,6 +47,7 @@ public class PlayerManager : NetworkBehaviour
     private float scoreIncrementPerSecond = 2f;
     public GameState CurrentState;
     public int PlayerID;
+    private PlayerNetworkMovement playerNetworkMovement;
 
 
     public bool IsGrounded
@@ -61,6 +62,7 @@ public class PlayerManager : NetworkBehaviour
         Rigidbody = GetComponent<Rigidbody>();
         BoxCollider = GetComponent<BoxCollider>();
         powerUpManager = GetComponent<PowerUpManager>();
+        playerNetworkMovement = GetComponent<PlayerNetworkMovement>();
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         PlayerID = players.Length;
     }
@@ -96,7 +98,7 @@ public class PlayerManager : NetworkBehaviour
             else
                 print("nije stiglo");
         }
-        GameManager.Instance.InitializeGame();
+        //GameManager.Instance.InitializeGame();
     }
 
     public void GetPos(Transform left, Transform centre, Transform right)
@@ -104,6 +106,7 @@ public class PlayerManager : NetworkBehaviour
         leftPos = left;
         centrePos = centre;
         rightPos= right;
+        playerNetworkMovement.GetPos(left, centrePos, rightPos);
     }
 
     private void Update()
@@ -129,7 +132,8 @@ public class PlayerManager : NetworkBehaviour
 
         if (CanMove(context) == false)
             return;
-
+        if (!HasInputAuthority)
+            return;
         if (inputValue > 0)
         {
             if (transform.position.z == centrePos.position.z)

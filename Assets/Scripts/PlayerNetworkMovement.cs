@@ -24,7 +24,7 @@ public class PlayerNetworkMovement : NetworkBehaviour
     {
         CharacterAnimator = GetComponent<Animator>();
         characterRb = GetComponent<Rigidbody>();
-        _networkAnimator =GetComponent<NetworkMecanimAnimator>();
+        _networkAnimator = GetComponent<NetworkMecanimAnimator>();
     }
     public void GetPos(Transform left, Transform centre, Transform right)
     {
@@ -34,28 +34,32 @@ public class PlayerNetworkMovement : NetworkBehaviour
     }
     public override void FixedUpdateNetwork()
     {
+
         if (GetInput(out NetworkInputData data))
         {
             if (data.IsMoveRight)
             {
                 NetworkManager.bufferedInput.IsMoveRight = false;
                 SetCharacterAnimation(RightBool);
+                //RPC_Move(rightPos.position);
                 StartCoroutine(MoveToPosition(rightPos.position));
             }
             else if (data.IsMoveCentre)
             {
                 NetworkManager.bufferedInput.IsMoveCentre = false;
-                if(transform.position.z == leftPos.position.z)
+                if (transform.position.z == leftPos.position.z)
                     SetCharacterAnimation(RightBool);
-                else if (transform.position.z == rightPos.position.z)
+                else if (transform.position.z == rightPos.position.z || transform.position.z >= rightPos.position.z - 0.1)
                     SetCharacterAnimation(LeftBool);
                 StartCoroutine(MoveToPosition(centrePos.position));
+                //RPC_Move(centrePos.position);
             }
             else if (data.IsMoveLeft)
             {
                 NetworkManager.bufferedInput.IsMoveLeft = false;
                 SetCharacterAnimation(LeftBool);
                 StartCoroutine(MoveToPosition(leftPos.position));
+                //RPC_Move(leftPos.position);
             }
             if (data.IsJump)
             {
@@ -69,6 +73,16 @@ public class PlayerNetworkMovement : NetworkBehaviour
                 _networkAnimator.SetTrigger(RollTriggerParameter);
             }
         }
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_Move(Vector3 target)
+    {
+        transform.position = new Vector3(transform.position.x, transform.position.y, target.z);
+        NetworkManager.bufferedInput.IsMoveRight = false;
+        NetworkManager.bufferedInput.IsMoveCentre = false;
+        NetworkManager.bufferedInput.IsMoveLeft = false;
+        CharacterAnimator.SetBool(RightBool, false);
+        CharacterAnimator.SetBool(LeftBool, false);
     }
     private IEnumerator MoveToPosition(Vector3 targetPosition)
     {

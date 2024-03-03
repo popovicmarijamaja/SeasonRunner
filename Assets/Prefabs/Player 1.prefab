@@ -16585,10 +16585,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9357838e7b9dd454f8c2abf0407decf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftPos: {fileID: 0}
+  centrePos: {fileID: 0}
+  rightPos: {fileID: 0}
   firePoint: {fileID: 8891143377059142349}
   collectibleParticle: {fileID: 2030615582121989477}
   boomParticle: {fileID: 258271498757739480}
   scoreText: {fileID: 0}
+  character: {fileID: 0}
   HealthSlider: {fileID: 0}
   CollectibleCollider: {fileID: 42880476626265032}
   Health: 0
@@ -16599,6 +16603,7 @@ MonoBehaviour:
   TotalScore: 0
   CoinScore: 0
   CurrentState: 0
+  PlayerID: 0
 --- !u!114 &3144206499761306875
 MonoBehaviour:
   m_ObjectHideFlags: 0
