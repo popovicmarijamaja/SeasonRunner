@@ -1,3 +1,4 @@
+using Fusion;
 using UnityEngine;
 
 public enum ObstacleType
@@ -24,6 +25,9 @@ public class ChanceManager : MonoBehaviour
 {
     public static ChanceManager Instance { get; private set; }
 
+    //[Networked]
+    public static int peed { get; set; }
+
 
     private void Awake()
     {
@@ -36,6 +40,17 @@ public class ChanceManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private void Start()
+    {
+        peed++;
+        Random.InitState(peed);
+    }
+
+    /*public void SetSeed(int seed)
+    {
+        Random.InitState(seed);
+        peed = seed;
+    }*/
 
     public ObstacleType ChooseObstacleType()
     {

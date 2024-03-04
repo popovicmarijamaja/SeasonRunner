@@ -1,3 +1,4 @@
+using Fusion;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,18 @@ public class SpawnManager : MonoBehaviour
     private readonly List<GameObject> ObjectsInEnvironment = new();
     private readonly float[] posForZ = { LeftLane, CentreLane, RightLane };
 
+    
+
+    private void Start()
+    {
+        //Random.InitState(42);
+    }
+
+    public void SetSeed(int seed)
+    {
+        Random.InitState(seed);
+        print(seed);
+    }
 
     public void SpawnNewSection(Transform spawnPosition)
     {
@@ -38,6 +51,8 @@ public class SpawnManager : MonoBehaviour
 
     private void SetEnvironment(GameObject environment, Transform spawnPosition)
     {
+        Random.InitState(ChanceManager.peed++);
+        print("seed is " + ChanceManager.peed);
         environment.transform.position = spawnPosition.position;
         environment.SetActive(true);
         environment.transform.parent = transform.parent;

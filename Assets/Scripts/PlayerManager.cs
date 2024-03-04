@@ -11,12 +11,6 @@ public class PlayerManager : NetworkBehaviour
     public const int HealthMaxValue = 4;
     public const int HealthMinValue = 0;
     public const float SpeedIncrement = 0.03f;
-    private const float TransitionDuration = 0.2f;
-    private const float JumpForce = 5f;
-    private const string JumpTriggerParameter = "jump";
-    private const string RollTriggerParameter = "down";
-    private const string RightBool = "right";
-    private const string LeftBool = "left";
     private const string DeathAnimBool = "death";
 
     public Transform leftPos;
@@ -78,28 +72,39 @@ public class PlayerManager : NetworkBehaviour
     }
     public void SetComponents()
     {
-        //CameraManager.Instance.SetCamera();
         GameObject[] stages = GameObject.FindGameObjectsWithTag("stage");
-        print("broj stageova " + stages.Length);
         for (int i = 0; i < stages.Length; i++)
         {
             if (PlayerID == stages[i].GetComponent<StageManager>().StageID)
             {
                 stage = stages[i];
                 StageManager stageManager = stage.GetComponent<StageManager>();
-                print("stiglo");
                 GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
                 gameObject.GetComponent<PlayerNetworkMovement>().GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
                 scoreText = stageManager.scoreText;
                 HealthSlider = stageManager.HealthSlider;
                 gameObject.GetComponent<PlayerCollision>().environmentSpawnPos = stageManager.environmentSpawnPos;
                 gameObject.GetComponent<PlayerCollision>().spawnManager = stageManager.spawnManager;
+                
             }
-            else
-                print("nije stiglo");
         }
-        //GameManager.Instance.InitializeGame();
     }
+    /*public void UpdateIntOnClients(int seed)
+    {
+        // Check if we are the server/host
+        if (Object.HasStateAuthority)
+        {
+            RPC_UpdateIntOnClients(seed);
+        }
+    }
+
+    // RPC Method that will be executed on all clients
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_UpdateIntOnClients(int seed)
+    {
+        stage.GetComponentInChildren<SpawnManager>().SetSeed(seed);
+        ChanceManager.Instance.SetSeed(seed);
+    }*/
 
     public void GetPos(Transform left, Transform centre, Transform right)
     {
@@ -113,7 +118,7 @@ public class PlayerManager : NetworkBehaviour
     {
         UpdateScore();
     }
-    
+
 
     private void UpdateScore()
     {
@@ -157,6 +162,7 @@ public class PlayerManager : NetworkBehaviour
             }
         }
     }
+
     private bool CanMove(InputAction.CallbackContext context)
     {
         if (GameManager.Instance.CurrentState == GameState.Paused || IsDead || !context.performed)
@@ -223,6 +229,30 @@ public class PlayerManager : NetworkBehaviour
         fireball.SetActive(true);
     }
 
+    public void HandleStartInput(InputAction.CallbackContext context)
+    {
+        if (CanStartGame(context))
+        {
+            RPC_StartGame();
+        }
+    }
+    [Rpc(RpcSources.All,RpcTargets.All)]
+    public void RPC_StartGame()
+    {
+        GameManager.Instance.InitializeGame();
+    }
+
+    private bool CanStartGame(InputAction.CallbackContext context)
+    {
+        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
+        if (!context.performed && HasStateAuthority && players.Length == GameManager.Instance.NumberOfPlayers)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
     public void SetPlayerState(GameState newState)
     {
         CurrentState = newState;
@@ -234,6 +264,7 @@ public class PlayerManager : NetworkBehaviour
                 break;
             case GameState.GameOver:
                 Animator.SetBool(DeathAnimBool, true);
+                boomParticle.gameObject.SetActive(false);
                 IsDead = true;
                 transform.position = new Vector3(transform.position.x, 0, transform.position.z);
                 Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
@@ -248,6 +279,8 @@ public class PlayerManager : NetworkBehaviour
 
     private void SetEnvironmentMovement()
     {
+        if (stage == null)
+            return;
         bool isPlaying;
         //Transform playerParent = gameObject.transform.parent;
         Transform playerParent = stage.transform;

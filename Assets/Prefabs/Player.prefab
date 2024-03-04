@@ -16727,6 +16727,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 67eec8d9-922e-477a-bde5-528327d5dc94
     m_ActionName: Player/Shoot[/Keyboard/leftShift,/Keyboard/space,/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1303598993844660648}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: HandleStartInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9c6f0fc2-c0a0-4430-90f3-630961795c24
+    m_ActionName: Player/StartGame[/Keyboard/enter]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

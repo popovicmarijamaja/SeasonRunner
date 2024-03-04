@@ -82230,6 +82230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootingEnemy: {fileID: 11400000, guid: 1e5b9e76ecb8497419ba78fd7c2cf51a, type: 2}
   walkingEnemy: {fileID: 11400000, guid: 27c2aea7ca3d3b447a65e7288fa4f0c8, type: 2}
+  Seed: 0
 --- !u!1 &8121248357252365386
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,11 +14,12 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private NetworkPrefabRef _stagePrefab;
-    // private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private Dictionary<PlayerRef, PlayerObjects> _spawnedCharacters = new Dictionary<PlayerRef, PlayerObjects>();
     public List<NetworkObject>players= new List<NetworkObject>();
     public List<NetworkObject> stages = new List<NetworkObject>();
     int i = 0;
+    [Networked]
+    public int Seed { get; set; }
 
     private void Awake()
     {
@@ -54,7 +55,12 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
-        
+        /*if (mode == GameMode.Host)
+        {
+            Seed = UnityEngine.Random.Range(1, 1001);
+            print("Seed is " + Seed);
+            ChanceManager.Instance.SetSeed(Seed);
+        }*/
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -66,8 +72,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkStageObject = runner.Spawn(_stagePrefab, stageSpawnPosition, Quaternion.identity, player);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, playerSpawnPosition, Quaternion.Euler(0, -90, 0), player);
             
-           // RPC_SetComponents(player, networkPlayerObject, networkStageObject);
-            
             PlayerObjects playerObjects = new PlayerObjects();
             playerObjects.PlayerObject = networkPlayerObject;
             playerObjects.StageObject = networkStageObject;
@@ -76,31 +80,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             stages.Add(networkStageObject);
             i++;
         }
-        /*if (player == runner.LocalPlayer)
-        {
-            Debug.Log("da");
-            PlayerObjects playerObjects = _spawnedCharacters[player];
-            NetworkObject playerObject = playerObjects.PlayerObject;
-            NetworkObject stageObject = playerObjects.StageObject;
-            playerObject.GetComponent<PlayerManager>().GetPos(stageObject.GetComponent<StageManager>().leftPos,
-               stageObject.GetComponent<StageManager>().centrePos, stageObject.GetComponent<StageManager>().rightPos);
-            playerObject.GetComponent<PlayerNetworkMovement>().GetPos(stageObject.GetComponent<StageManager>().leftPos,
-                stageObject.GetComponent<StageManager>().centrePos, stageObject.GetComponent<StageManager>().rightPos);
-        }*/
     }
-
-    /*[Rpc(Channel = RpcChannel.Reliable)]
-    public void RPC_SetComponents([RpcTarget] PlayerRef player,NetworkObject networkPlayerObject, NetworkObject networkStageObject)
-    {
-        StageManager stageManager = networkStageObject.GetComponent<StageManager>();
-        PlayerManager playerManager = networkPlayerObject.GetComponent<PlayerManager>();
-        PlayerCollision playerCollision=networkPlayerObject.GetComponent<PlayerCollision>();
-        playerManager.GetPos(stageManager.leftPos, stageManager.centrePos, stageManager.rightPos);
-        playerManager.scoreText = stageManager.scoreText;
-        playerManager.HealthSlider = stageManager.HealthSlider;
-        playerCollision.environmentSpawnPos = stageManager.environmentSpawnPos;
-        playerCollision.spawnManager=stageManager.spawnManager;
-    }*/
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
@@ -130,7 +110,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(bufferedInput);
         
     }
-
 
 
 

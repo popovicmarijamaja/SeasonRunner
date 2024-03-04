@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
         //FindObjectOfType<Camera>().enabled = false;
         CameraManager.Instance.SetCamera();
         UIManager.Instance.HideMainMenu();
-        PlayerManager[] players = FindObjectsOfType<PlayerManager>();
         PlayGame();
     }
 

@@ -172,7 +172,6 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.NumberOfPlayers = numberOfPlayers;
     }
 
-    //Testing
 
     public void JoinTheGame()
     {

@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "StartGame",
+                    "type": "Button",
+                    "id": "9c6f0fc2-c0a0-4430-90f3-630961795c24",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -238,6 +247,17 @@
                     "processors": "",
                     "groups": "UHJK",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1202d80f-125e-4eb9-8b11-fb1c038610dd",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Arrows;WASD;UHJK",
+                    "action": "StartGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
