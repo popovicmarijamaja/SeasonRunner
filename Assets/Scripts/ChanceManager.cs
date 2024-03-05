@@ -42,15 +42,15 @@ public class ChanceManager : MonoBehaviour
     }
     private void Start()
     {
-        peed++;
+        peed = 46;
         Random.InitState(peed);
     }
 
-    /*public void SetSeed(int seed)
+    public void SetSeed()
     {
-        Random.InitState(seed);
-        peed = seed;
-    }*/
+        Random.InitState(peed);
+        print("to je" + peed);
+    }
 
     public ObstacleType ChooseObstacleType()
     {

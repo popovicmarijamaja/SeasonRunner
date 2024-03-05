@@ -27,7 +27,7 @@ public class PlayerManager : NetworkBehaviour
     public BoxCollider CollectibleCollider;
     private Rigidbody Rigidbody;
     private BoxCollider BoxCollider;
-    private GameObject stage;
+    public GameObject stage;
 
     public int Health;
     public bool IsDead;
@@ -85,26 +85,10 @@ public class PlayerManager : NetworkBehaviour
                 HealthSlider = stageManager.HealthSlider;
                 gameObject.GetComponent<PlayerCollision>().environmentSpawnPos = stageManager.environmentSpawnPos;
                 gameObject.GetComponent<PlayerCollision>().spawnManager = stageManager.spawnManager;
-                
+                CollectibleCollider=stageManager.CollectibleCollider;
             }
         }
     }
-    /*public void UpdateIntOnClients(int seed)
-    {
-        // Check if we are the server/host
-        if (Object.HasStateAuthority)
-        {
-            RPC_UpdateIntOnClients(seed);
-        }
-    }
-
-    // RPC Method that will be executed on all clients
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_UpdateIntOnClients(int seed)
-    {
-        stage.GetComponentInChildren<SpawnManager>().SetSeed(seed);
-        ChanceManager.Instance.SetSeed(seed);
-    }*/
 
     public void GetPos(Transform left, Transform centre, Transform right)
     {
@@ -256,7 +240,6 @@ public class PlayerManager : NetworkBehaviour
     public void SetPlayerState(GameState newState)
     {
         CurrentState = newState;
-        print("current state je: " + CurrentState);
         switch (newState)
         {
             case GameState.Playing:
@@ -264,7 +247,6 @@ public class PlayerManager : NetworkBehaviour
                 break;
             case GameState.GameOver:
                 Animator.SetBool(DeathAnimBool, true);
-                boomParticle.gameObject.SetActive(false);
                 IsDead = true;
                 transform.position = new Vector3(transform.position.x, 0, transform.position.z);
                 Rigidbody.constraints = RigidbodyConstraints.FreezeAll;
@@ -337,9 +319,17 @@ public class PlayerManager : NetworkBehaviour
     {
         collectibleParticle.Play();
     }
+
     public void PlayExplosionParticle()
     {
+        StartCoroutine(PlayExploasion());
+    }
+
+    private IEnumerator PlayExploasion()
+    {
         boomParticle.Play();
+        yield return new WaitForSeconds(1.5f);
+        boomParticle.gameObject.SetActive(false);
     }
 
 }

@@ -52,6 +52,7 @@ public class SpawnManager : MonoBehaviour
     private void SetEnvironment(GameObject environment, Transform spawnPosition)
     {
         Random.InitState(ChanceManager.peed++);
+        ChanceManager.Instance.SetSeed();
         print("seed is " + ChanceManager.peed);
         environment.transform.position = spawnPosition.position;
         environment.SetActive(true);

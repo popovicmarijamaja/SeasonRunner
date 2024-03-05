@@ -14,6 +14,7 @@ public class StageManager : NetworkBehaviour
     public SpawnManager spawnManager;
     public TextMeshProUGUI scoreText;
     public Slider HealthSlider;
+    public BoxCollider CollectibleCollider;
 
     public int StageID;
 

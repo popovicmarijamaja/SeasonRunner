@@ -29,7 +29,7 @@ public class MagnetPower : MonoBehaviour
 
             foreach (GameObject obj in players)
             {
-                if (obj.transform.IsChildOf(other.transform))
+                if (obj.GetComponent<PlayerManager>().CollectibleCollider==other)
                 {
                     player = obj;
                 }

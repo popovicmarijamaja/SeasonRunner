@@ -100,7 +100,6 @@ public class GameManager : MonoBehaviour
         print(players.Length);
         foreach (PlayerManager player in players)
         {
-            print("current state je: " + CurrentState);
             player.SetPlayerState(newState);
             if (newState == GameState.Playing)
                 player.enabled = true;
